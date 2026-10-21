@@ -6,6 +6,13 @@ import java.time.LocalDate;
 
 public abstract class Persona implements Serializable{
 
+	@Override
+	public String toString() {
+		return "Persona [dni=" + dni + ", nombre=" + nombre + ", apellidos=" + apellidos + ", fechaNacimiento="
+				+ fechaNacimiento + ", sexo=" + sexo + ", telefono=" + telefono + ", email=" + email + ", direccion="
+				+ direccion + "]";
+	}
+
 	private static final long serialVersionUID = 1L;
 
 	// Parametros:

@@ -1,0 +1,104 @@
+package gui;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Image;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+
+import domain.enums.Sexo;
+
+public class VentanaRegistro extends JFrame{
+
+	private static final long serialVersionUID = 1L;
+	
+	public static void main(String[] args) {
+		new VentanaRegistro();
+	}
+	
+	public VentanaRegistro() {
+		
+		// Configuraciones de la ventana
+		setTitle("Registrar Nuevo Usuario");
+		setSize(420, 430);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setResizable(false);
+		setLocationRelativeTo(null); // Centrar en la pantalla
+		
+		JPanel panelTotal = new JPanel(new BorderLayout());
+		panelTotal.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 20));
+		// Panel Superior con titulo e imagen
+		JPanel panelSuperior = new JPanel(new BorderLayout(0,10));
+		
+		
+		// Titulo
+		JLabel labelTitulo = new JLabel("NUEVO USUARIO", JLabel.CENTER);
+		labelTitulo.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
+		panelSuperior.add(labelTitulo, BorderLayout.NORTH);
+		// Imagen
+		ImageIcon imagen = new ImageIcon(getClass().getResource("/images/NuevoUsuario.png"));
+		Image imagenEscalada = imagen.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH); // Reescalacion de imagen
+		JLabel labelImagen = new JLabel(new ImageIcon(imagenEscalada));
+		panelSuperior.add(labelImagen, BorderLayout.CENTER);
+		
+		// Panel Central con parametros
+		
+		JPanel panelCentral = new JPanel(new GridLayout(9, 1, 10, 10));
+		
+		// Parametros
+		
+		// Nombre
+		JPanel nombre = new JPanel(new GridLayout(2,1,5,3));
+		JLabel labelNombre = new JLabel("Nombre: ");
+		nombre.add(labelNombre);
+		JTextField textoNombre = new JTextField();
+		nombre.add(textoNombre);
+		panelCentral.add(nombre);
+	
+		// Apellidos
+		JPanel apellidos = new JPanel(new GridLayout(2,1,5,3));
+		JLabel labelApellidos = new JLabel("Apellidos: ");
+		apellidos.add(labelApellidos);
+		JTextField textoApellidos = new JTextField();
+		apellidos.add(textoApellidos);
+		panelCentral.add(apellidos);
+		
+		// Fecha de nacimiento
+		JPanel fechaNac = new JPanel(new GridLayout(2,1,5,3));
+		JLabel labelFechaNac = new JLabel("Fecha de nacimiento (formato : dd-mm-yy): ");
+		fechaNac.add(labelFechaNac);
+		JTextField textoFechaNac = new JTextField();
+		fechaNac.add(textoFechaNac);
+		panelCentral.add(fechaNac);
+		
+		// Sexo
+		JPanel sexo = new JPanel(new GridLayout(2,1,5,3));
+		JLabel labelSexo = new JLabel("Sexo: ");
+		sexo.add(labelSexo);
+		JComboBox<Sexo> comboSexo = new JComboBox<Sexo>();
+		comboSexo.addItem(Sexo.HOMBRE);
+		comboSexo.addItem(Sexo.MUJER);		
+		sexo.add(comboSexo);
+		panelCentral.add(sexo);
+		
+		panelTotal.add(panelSuperior, BorderLayout.NORTH);
+		panelTotal.add(panelCentral, BorderLayout.CENTER);
+		
+		JScrollPane scroller = new JScrollPane(panelTotal);
+		
+		this.add(scroller);
+		
+		setVisible(true);
+	}
+}

@@ -8,6 +8,13 @@ import domain.enums.Sexo;
 
 public class Paciente extends Persona implements Serializable{
 
+	@Override
+	public String toString() {
+		return "Paciente [lAlergias=" + lAlergias + ", diagnostico=" + diagnostico + ", numSegSocial=" + numSegSocial
+				+ ", historialClinico=" + historialClinico + ", fechaAlta=" + fechaAlta + ", habitacion=" + habitacion
+				+ "]";
+	}
+
 	private static final long serialVersionUID = 1L;
 	private List<Alergia> lAlergias;
 	private Diagnostico diagnostico;
@@ -29,7 +36,6 @@ public class Paciente extends Persona implements Serializable{
 		
 		// TODO Auto-generated constructor stub
 	}
-
 	public List<Alergia> getlAlergias() {
 		return lAlergias;
 	}
