@@ -19,10 +19,17 @@ public class Paciente extends Usuario implements Serializable{
 	private LocalDate fechaAlta;
 	private Habitacion habitacion;
 	
-	public Paciente(String dni, String nombre, String apellidos, LocalDate fechaNacimiento, Sexo sexo, int telefono, String email, String direccion, String nomUsuario, String contraseña, 
+	
+	
+	public Paciente(String dni, String nombre, String apellidos, LocalDate fechaNacimiento, Sexo sexo, int telefono,
+			String email, String direccion, String contraseña) {
+		super(dni, nombre, apellidos, fechaNacimiento, sexo, telefono, email, direccion, contraseña);
+	}
+	
+	public Paciente(String dni, String nombre, String apellidos, LocalDate fechaNacimiento, Sexo sexo, int telefono, String email, String direccion, String contraseña, 
 			int numSegSocial, List<Alergia> lAlergias, Diagnostico diagnostico, HistorialClinico historialClinico, LocalDate fechaAlta, Habitacion habitacion) {
 		
-		super(dni, nombre, apellidos, fechaNacimiento, sexo, telefono, email, direccion, nomUsuario, contraseña);
+		super(dni, nombre, apellidos, fechaNacimiento, sexo, telefono, email, direccion, contraseña);
 		this.codigoPaciente = contadorPaciente;
 		contadorPaciente++;
 		this.setNumSegSocial(numSegSocial);

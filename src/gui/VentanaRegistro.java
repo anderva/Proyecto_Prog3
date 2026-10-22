@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -47,6 +48,7 @@ public class VentanaRegistro extends JFrame{
 		JLabel labelTitulo = new JLabel("NUEVO USUARIO", JLabel.CENTER);
 		labelTitulo.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
 		panelSuperior.add(labelTitulo, BorderLayout.NORTH);
+		
 		// Imagen
 		ImageIcon imagen = new ImageIcon(getClass().getResource("/images/NuevoUsuario.png"));
 		Image imagenEscalada = imagen.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH); // Reescalacion de imagen
@@ -126,16 +128,28 @@ public class VentanaRegistro extends JFrame{
 		direccion.add(textoDireccion);
 		panelCentral.add(direccion);
 		
+		// Contraseña
+		JPanel contraseña = new JPanel(new GridLayout(2,1,5,3));
+		JLabel labelContraseña = new JLabel("Contraseña: ");
+		contraseña.add(labelContraseña);
+		JTextField textoContraseña = new JTextField();
+		contraseña.add(textoContraseña);
+		panelCentral.add(contraseña);
 		
 		
+		// Panel Inferior con boton guardar y cancelar
+		JPanel panelInferior = new JPanel(new GridLayout(1, 2, 10, 10));
+		panelInferior.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 20));
 		// Boton Guardar
-		JPanel guardar = new JPanel(new BorderLayout());
 		JButton botonGuardar = new JButton("Guardar");
-		guardar.add(botonGuardar);
-		panelCentral.add(guardar);
+		panelInferior.add(botonGuardar);
+		// Boton Guardar
+		JButton botonCancelar = new JButton("Cancelar");
+		panelInferior.add(botonCancelar);
 		
 		panelTotal.add(panelSuperior, BorderLayout.NORTH);
 		panelTotal.add(panelCentral, BorderLayout.CENTER);
+		panelTotal.add(panelInferior, BorderLayout.SOUTH);
 		
 		JScrollPane scroller = new JScrollPane(panelTotal);
 		

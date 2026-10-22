@@ -18,7 +18,6 @@ public abstract class Usuario implements Serializable{
 	// Parametros:
 	private static int contadorUsuario;
 	private int codigoUsuario;
-	private String nomUsuario;
 	private String contraseña;
 	private String dni;
 	private String nombre;
@@ -31,7 +30,7 @@ public abstract class Usuario implements Serializable{
 
 	// Constructor(es)
 	public Usuario(String dni, String nombre, String apellidos, LocalDate fechaNacimiento, Sexo sexo, int telefono,
-			String email, String direccion, String nomUsuario, String contraseña) {
+			String email, String direccion, String contraseña) {
 		super();
 		this.codigoUsuario = contadorUsuario;
 		contadorUsuario++;
@@ -44,7 +43,6 @@ public abstract class Usuario implements Serializable{
 		this.email = email;
 		this.direccion = direccion;
 		this.contraseña = contraseña;
-		this.nomUsuario = nomUsuario;
 	}
 
 	// Getters y Setters 
@@ -121,13 +119,6 @@ public abstract class Usuario implements Serializable{
 		return serialVersionUID;
 	}
 
-	public String getNomUsuario() {
-		return nomUsuario;
-	}
-
-	public void setNomUsuario(String nomUsuario) {
-		this.nomUsuario = nomUsuario;
-	}
 
 	public String getContraseña() {
 		return contraseña;
