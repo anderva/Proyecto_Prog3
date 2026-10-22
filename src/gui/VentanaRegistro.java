@@ -10,6 +10,7 @@ import java.awt.Image;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -58,6 +59,14 @@ public class VentanaRegistro extends JFrame{
 		
 		// Parametros
 		
+		// DNI
+		JPanel dni = new JPanel(new GridLayout(2,1,5,3));
+		JLabel labelDni = new JLabel("DNI: ");
+		dni.add(labelDni);
+		JTextField textoDni = new JTextField();
+		dni.add(textoDni);
+		panelCentral.add(dni);
+		
 		// Nombre
 		JPanel nombre = new JPanel(new GridLayout(2,1,5,3));
 		JLabel labelNombre = new JLabel("Nombre: ");
@@ -65,7 +74,8 @@ public class VentanaRegistro extends JFrame{
 		JTextField textoNombre = new JTextField();
 		nombre.add(textoNombre);
 		panelCentral.add(nombre);
-	
+
+		
 		// Apellidos
 		JPanel apellidos = new JPanel(new GridLayout(2,1,5,3));
 		JLabel labelApellidos = new JLabel("Apellidos: ");
@@ -92,6 +102,38 @@ public class VentanaRegistro extends JFrame{
 		sexo.add(comboSexo);
 		panelCentral.add(sexo);
 		
+		// Telefono
+		JPanel tfno = new JPanel(new GridLayout(2,1,5,3));
+		JLabel labelTfno = new JLabel("Teléfono: ");
+		tfno.add(labelTfno);
+		JTextField textoTfno = new JTextField();
+		tfno.add(textoTfno);
+		panelCentral.add(tfno);
+		
+		// Email
+		JPanel email = new JPanel(new GridLayout(2,1,5,3));
+		JLabel labelEmail = new JLabel("Correo electrónico: ");
+		email.add(labelEmail);
+		JTextField textoEmail = new JTextField();
+		email.add(textoEmail);
+		panelCentral.add(email);
+		
+		// Direccion
+		JPanel direccion = new JPanel(new GridLayout(2,1,5,3));
+		JLabel labelDireccion = new JLabel("Dirección: ");
+		direccion.add(labelDireccion);
+		JTextField textoDireccion = new JTextField();
+		direccion.add(textoDireccion);
+		panelCentral.add(direccion);
+		
+		
+		
+		// Boton Guardar
+		JPanel guardar = new JPanel(new BorderLayout());
+		JButton botonGuardar = new JButton("Guardar");
+		guardar.add(botonGuardar);
+		panelCentral.add(guardar);
+		
 		panelTotal.add(panelSuperior, BorderLayout.NORTH);
 		panelTotal.add(panelCentral, BorderLayout.CENTER);
 		
@@ -100,5 +142,19 @@ public class VentanaRegistro extends JFrame{
 		this.add(scroller);
 		
 		setVisible(true);
+	}
+	
+	public static boolean esNombreValido(String nombre) {
+        // No puede ser nulo ni estar vacío
+        if (nombre == null || nombre.isBlank()) {
+            return false;
+        }
+        // No puede contener números
+        for (char c : nombre.toCharArray()) {
+            if (Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
 	}
 }

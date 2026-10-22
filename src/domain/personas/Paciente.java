@@ -6,16 +6,12 @@ import java.util.List;
 import domain.*;
 import domain.enums.Sexo;
 
-public class Paciente extends Persona implements Serializable{
+public class Paciente extends Usuario implements Serializable{
 
-	@Override
-	public String toString() {
-		return "Paciente [lAlergias=" + lAlergias + ", diagnostico=" + diagnostico + ", numSegSocial=" + numSegSocial
-				+ ", historialClinico=" + historialClinico + ", fechaAlta=" + fechaAlta + ", habitacion=" + habitacion
-				+ "]";
-	}
-
+	
 	private static final long serialVersionUID = 1L;
+	private static int contadorPaciente;
+	private int codigoPaciente;
 	private List<Alergia> lAlergias;
 	private Diagnostico diagnostico;
 	private int numSegSocial;
@@ -23,10 +19,12 @@ public class Paciente extends Persona implements Serializable{
 	private LocalDate fechaAlta;
 	private Habitacion habitacion;
 	
-	public Paciente(String dni, String nombre, String apellidos, LocalDate fechaNacimiento, Sexo sexo, int telefono, String email, String direccion,
+	public Paciente(String dni, String nombre, String apellidos, LocalDate fechaNacimiento, Sexo sexo, int telefono, String email, String direccion, String nomUsuario, String contraseña, 
 			int numSegSocial, List<Alergia> lAlergias, Diagnostico diagnostico, HistorialClinico historialClinico, LocalDate fechaAlta, Habitacion habitacion) {
 		
-		super(dni, nombre, apellidos, fechaNacimiento, sexo, telefono, email, direccion);
+		super(dni, nombre, apellidos, fechaNacimiento, sexo, telefono, email, direccion, nomUsuario, contraseña);
+		this.codigoPaciente = contadorPaciente;
+		contadorPaciente++;
 		this.setNumSegSocial(numSegSocial);
 		this.setlAlergias(lAlergias);
 		this.setDiagnostico(diagnostico);
@@ -34,7 +32,6 @@ public class Paciente extends Persona implements Serializable{
 		this.setFechaAlta(fechaAlta);
 		this.setHabitacion(habitacion);
 		
-		// TODO Auto-generated constructor stub
 	}
 	public List<Alergia> getlAlergias() {
 		return lAlergias;
@@ -83,6 +80,16 @@ public class Paciente extends Persona implements Serializable{
 	public void setHabitacion(Habitacion habitacion) {
 		this.habitacion = habitacion;
 	}
-
+	
+	public int getCodigoPaciente() {
+		return codigoPaciente;
+	}
+	public void setCodigoPaciente(int codigoPaciente) {
+		this.codigoPaciente = codigoPaciente;
+	}
+	@Override
+	public String toString() {
+		return "Paciente [" + super.toString() + "]";
+	}
 	
 }
