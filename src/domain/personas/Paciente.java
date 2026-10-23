@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import domain.*;
+import domain.enums.GrupoSanguineo;
 import domain.enums.Sexo;
 
 public class Paciente extends Usuario implements Serializable{
@@ -12,48 +13,51 @@ public class Paciente extends Usuario implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private static int contadorPaciente;
 	private int codigoPaciente;
-	private List<Alergia> lAlergias;
-	private Diagnostico diagnostico;
+	private List<String> lAlergias;
+	private Consulta consulta;
 	private int numSegSocial;
+	private GrupoSanguineo grupoSanguineo;
 	private HistorialClinico historialClinico;
 	private LocalDate fechaAlta;
 	private Habitacion habitacion;
 	
 	
 	
+	
 	public Paciente(String dni, String nombre, String apellidos, LocalDate fechaNacimiento, Sexo sexo, int telefono,
-			String email, String direccion, String contraseña) {
+			String email, String direccion, String contraseña, GrupoSanguineo grupoSanguineo) {
 		super(dni, nombre, apellidos, fechaNacimiento, sexo, telefono, email, direccion, contraseña);
 	}
 	
 	public Paciente(String dni, String nombre, String apellidos, LocalDate fechaNacimiento, Sexo sexo, int telefono, String email, String direccion, String contraseña, 
-			int numSegSocial, List<Alergia> lAlergias, Diagnostico diagnostico, HistorialClinico historialClinico, LocalDate fechaAlta, Habitacion habitacion) {
+			int numSegSocial, List<String> lAlergias, Consulta consulta, HistorialClinico historialClinico, LocalDate fechaAlta, Habitacion habitacion, GrupoSanguineo grupoSanguineo) {
 		
 		super(dni, nombre, apellidos, fechaNacimiento, sexo, telefono, email, direccion, contraseña);
 		this.codigoPaciente = contadorPaciente;
 		contadorPaciente++;
 		this.setNumSegSocial(numSegSocial);
 		this.setlAlergias(lAlergias);
-		this.setDiagnostico(diagnostico);
+		this.setConsulta(consulta);
 		this.setHistorialClinico(historialClinico);
 		this.setFechaAlta(fechaAlta);
 		this.setHabitacion(habitacion);
+		this.setGrupoSanguineo(grupoSanguineo);
 		
 	}
-	public List<Alergia> getlAlergias() {
+	public List<String> getlAlergias() {
 		return lAlergias;
 	}
 
-	public void setlAlergias(List<Alergia> lAlergias) {
+	public void setlAlergias(List<String> lAlergias) {
 		this.lAlergias = lAlergias;
 	}
 
-	public Diagnostico getDiagnostico() {
-		return diagnostico;
+	public Consulta getConsulta() {
+		return consulta;
 	}
 
-	public void setDiagnostico(Diagnostico diagnostico) {
-		this.diagnostico = diagnostico;
+	public void setConsulta(Consulta consulta) {
+		this.consulta = consulta;
 	}
 
 	public int getNumSegSocial() {
@@ -93,7 +97,17 @@ public class Paciente extends Usuario implements Serializable{
 	}
 	public void setCodigoPaciente(int codigoPaciente) {
 		this.codigoPaciente = codigoPaciente;
+		
 	}
+	
+	public GrupoSanguineo getGrupoSanguineo() {
+		return grupoSanguineo;
+	}
+
+	public void setGrupoSanguineo(GrupoSanguineo grupoSanguineo) {
+		this.grupoSanguineo = grupoSanguineo;
+	}
+
 	@Override
 	public String toString() {
 		return "Paciente [" + super.toString() + "]";
