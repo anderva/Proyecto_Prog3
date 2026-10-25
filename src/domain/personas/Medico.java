@@ -4,26 +4,28 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import domain.Horario;
+import domain.enums.Especialidad;
 import domain.enums.Sexo;
 
 public class Medico extends Usuario {
-	//Parámetros
+	// Parámetros
 	private static final long serialVersionUID = 1L;
 	private static int contadorMedico;
 	private int codMedico;
-	private String especialidad;
+	private Especialidad especialidad;
 	private ArrayList<Horario> lHorarios;
 	private int duracionCita;
-	
-	//Constructores
+
+	// Constructores
 	public Medico(String dni, String nombre, String apellidos, LocalDate fechaNacimiento, Sexo sexo, int telefono,
 			String email, String direccion, String contrasenia) {
 		super(dni, nombre, apellidos, fechaNacimiento, sexo, telefono, email, direccion, contrasenia);
-		
+
 	}
 
 	public Medico(String dni, String nombre, String apellidos, LocalDate fechaNacimiento, Sexo sexo, int telefono,
-			String email, String direccion, String contrasenia, String especialidad, ArrayList<Horario> lHorarios, int duracionCita) {
+			String email, String direccion, String contrasenia, Especialidad especialidad, ArrayList<Horario> lHorarios,
+			int duracionCita) {
 		super(dni, nombre, apellidos, fechaNacimiento, sexo, telefono, email, direccion, contrasenia);
 		contadorMedico++;
 		this.codMedico = contadorMedico;
@@ -32,12 +34,12 @@ public class Medico extends Usuario {
 		this.duracionCita = duracionCita;
 	}
 
-	//Getters y Setters
-	public String getEspecialidad() {
+	// Getters y Setters
+	public Especialidad getEspecialidad() {
 		return especialidad;
 	}
 
-	public void setEspecialidad(String especialidad) {
+	public void setEspecialidad(Especialidad especialidad) {
 		this.especialidad = especialidad;
 	}
 
@@ -75,12 +77,4 @@ public class Medico extends Usuario {
 				+ especialidad + ", lHorarios=" + lHorarios + ", duracionCita=" + duracionCita + "]";
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
 }

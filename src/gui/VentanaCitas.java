@@ -18,6 +18,7 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import domain.Cita;
+import domain.enums.Especialidad;
 import domain.enums.EstadoCita;
 import domain.enums.GrupoSanguineo;
 import domain.enums.Sexo;
@@ -152,11 +153,11 @@ public class VentanaCitas extends JFrame {
 		// medicos de prueba
 		ArrayList<Medico> medicos = new ArrayList<Medico>();
 		Medico m1 = new Medico("12345678A", "Aitor", "Garcia", LocalDate.of(1980, 1, 15), Sexo.HOMBRE, 611111111,
-				"garcia@osaki.eus", "Bilbao", "abcd", "Cardiologia", new ArrayList<>(), 30);
+				"garcia@osaki.eus", "Bilbao", "abcd", Especialidad.CARDIOLOGIA, new ArrayList<>(), 30);
 		Medico m2 = new Medico("12345678B", "Ander", "Vallejo", LocalDate.of(1975, 7, 2), Sexo.HOMBRE, 622222222,
-				"vallejo@osaki.eus", "Bilbao", "abcd", "Pediatría", new ArrayList<>(), 20);
+				"vallejo@osaki.eus", "Bilbao", "abcd", Especialidad.PEDIATRIA, new ArrayList<>(), 20);
 		Medico m3 = new Medico("12345678C", "Miren", "Ortiz", LocalDate.of(1983, 4, 22), Sexo.MUJER, 633333333,
-				"ortiz@osaki.eus", "Getxo", "abcd", "Traumatologia", new ArrayList<>(), 30);
+				"ortiz@osaki.eus", "Getxo", "abcd", Especialidad.TRAUMATOLOGIA, new ArrayList<>(), 30);
 		medicos.add(m1);
 		medicos.add(m2);
 		medicos.add(m3);

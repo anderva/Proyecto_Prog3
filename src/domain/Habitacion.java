@@ -12,7 +12,7 @@ public class Habitacion {
 
 	}
 
-	public Habitacion(int numHabitacion, int camaDisp, TipoHabitacion tipoHabitacion) {
+	public Habitacion(int camaDisp, TipoHabitacion tipoHabitacion) {
 		cont++;
 		this.numHabitacion = cont;
 		this.tipoHabitacion = tipoHabitacion;

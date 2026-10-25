@@ -3,25 +3,23 @@ package domain;
 import java.util.ArrayList;
 
 public class Receta {
-	//Parametros
+	// Parametros
 	private static int contadorRecetas;
 	private int idReceta;
-	private String medicamento;
-	private String dosis;
-	private String duracion;
+	private Medicamento medicamento;
 	private String indicaciones;
-	
+	private ArrayList<Medicamento> lMedicamentos;
+
 	public Receta() {
-		
+
 	}
 
-	public Receta(int idReceta, String medicamento, String dosis, String duracion, String indicaciones) {
+	public Receta(Medicamento medicamento, String dosis, String duracion, String indicaciones) {
 		contadorRecetas++;
 		this.idReceta = contadorRecetas;
 		this.medicamento = medicamento;
-		this.dosis = dosis;
-		this.duracion = duracion;
 		this.indicaciones = indicaciones;
+		this.lMedicamentos = new ArrayList<Medicamento>();
 	}
 
 	public static int getContadorRecetas() {
@@ -40,28 +38,12 @@ public class Receta {
 		this.idReceta = idReceta;
 	}
 
-	public String getMedicamento() {
+	public Medicamento getMedicamento() {
 		return medicamento;
 	}
 
-	public void setMedicamento(String medicamento) {
+	public void setMedicamento(Medicamento medicamento) {
 		this.medicamento = medicamento;
-	}
-
-	public String getDosis() {
-		return dosis;
-	}
-
-	public void setDosis(String dosis) {
-		this.dosis = dosis;
-	}
-
-	public String getDuracion() {
-		return duracion;
-	}
-
-	public void setDuracion(String duracion) {
-		this.duracion = duracion;
 	}
 
 	public String getIndicaciones() {
@@ -72,15 +54,21 @@ public class Receta {
 		this.indicaciones = indicaciones;
 	}
 
+	public ArrayList<Medicamento> getlMedicamentos() {
+		return lMedicamentos;
+	}
+
+	public void setlMedicamentos(ArrayList<Medicamento> lMedicamentos) {
+		this.lMedicamentos = lMedicamentos;
+	}
+
 	@Override
 	public String toString() {
-		return "Receta [idReceta=" + idReceta + ", medicamento=" + medicamento + ", dosis=" + dosis + ", duracion="
-				+ duracion + ", indicaciones=" + indicaciones + "]";
+		return "Receta [idReceta=" + idReceta + ", medicamento=" + medicamento + ", indicaciones=" + indicaciones
+				+ ", lMedicamentos=" + lMedicamentos + "]";
 	}
-	
-	
-	
-	
-	
-	
+
+	public void añadirMedicamento(Medicamento m) {
+		lMedicamentos.add(m);
+	}
 }

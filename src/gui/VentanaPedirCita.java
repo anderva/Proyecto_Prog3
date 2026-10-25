@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import domain.enums.Especialidad;
 import domain.enums.Sexo;
 import domain.personas.Medico;
 
@@ -110,9 +111,9 @@ public class VentanaPedirCita extends JFrame{
 		// Médicos de prueba
 		ArrayList<Medico> medicos = new ArrayList<Medico>();
 		medicos.add(new Medico("12345678A", "Poyete", "Garcia", LocalDate.of(1980, 1, 15), Sexo.MUJER, 611111111,
-				"filete@osaki.eus", "Bilbao", "abcd", "Cardiologia", new ArrayList<>(), 30));
+				"filete@osaki.eus", "Bilbao", "abcd", Especialidad.CARDIOLOGIA, new ArrayList<>(), 30));
 		medicos.add(new Medico("12345678B", "Anderva", "Lopez", LocalDate.of(1975, 7, 2), Sexo.HOMBRE, 622222222,
-				"vallejo@osaki.eus", "Bilbao", "abcd", "Pediatría", new ArrayList<>(), 20));
+				"vallejo@osaki.eus", "Bilbao", "abcd", Especialidad.PEDIATRIA, new ArrayList<>(), 20));
 
 		new VentanaPedirCita(medicos);	}
 
