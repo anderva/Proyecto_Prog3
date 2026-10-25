@@ -83,7 +83,7 @@ public class VentanaInicial extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String Usuario = txtUsuario.getText();
 				String Contraseña = String.valueOf(txtContraseña.getPassword());
-				if (Usuario.equals("Alumno") && Contraseña.equals("UnaiCalvo")) {
+				if (Usuario.equals("Alumno") && Contraseña.equals("Alumno123")) {
 					// Pasar a la siguiente ventana
 				} else {
 					JOptionPane.showMessageDialog(null, "Nombre de usuario y/o contraseña incorrectos");
