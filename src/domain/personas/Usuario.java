@@ -4,7 +4,7 @@ import domain.enums.Sexo;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public abstract class Usuario implements Serializable{
+public class Usuario implements Serializable{
 
 	@Override
 	public String toString() {

@@ -4,17 +4,24 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import domain.enums.Sexo;
+import domain.personas.Usuario;
 
 public class VentanaRegistro extends JFrame{
 
@@ -25,7 +32,6 @@ public class VentanaRegistro extends JFrame{
 	}
 
 	public VentanaRegistro() {
-
 		// Configuraciones de la ventana
 		setTitle("Registrar Nuevo Usuario");
 		setSize(420, 430);
@@ -84,7 +90,7 @@ public class VentanaRegistro extends JFrame{
 
 		// Fecha de nacimiento
 		JPanel fechaNac = new JPanel(new GridLayout(2,1,5,3));
-		JLabel labelFechaNac = new JLabel("Fecha de nacimiento (formato : dd-mm-yy): ");
+		JLabel labelFechaNac = new JLabel("Fecha de nacimiento (formato : yyyy-MM-dd): ");
 		fechaNac.add(labelFechaNac);
 		JTextField textoFechaNac = new JTextField();
 		fechaNac.add(textoFechaNac);
@@ -139,27 +145,75 @@ public class VentanaRegistro extends JFrame{
 		// Boton Guardar
 		JButton botonGuardar = new JButton("Guardar");
 		panelInferior.add(botonGuardar);
-		// Boton Guardar
+		botonGuardar.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(	esDniValido(textoDni.getText()) &&
+					esNombreValido(textoNombre.getText()) &&
+					esNombreValido(textoApellidos.getText()) &&
+					esTfnoValido(textoTfno.getText()) &&
+					esFechaValida(textoFechaNac.getText())) {
+					
+					Usuario usuario = new Usuario(	
+							textoDni.getText(), 
+							textoNombre.getText(),
+							textoApellidos.getText(), 
+							LocalDate.parse(textoFechaNac.getText()),
+							Sexo.valueOf(comboSexo.getSelectedItem().toString()), 
+							Integer.parseInt(textoTfno.getText()), 
+							textoEmail.getText(),
+							textoDireccion.getText(), 
+							textoContraseña.getText());
+					System.out.println(usuario);
+				} else {
+					String strErrores = "Existen errores de formato en los siguientes campos: \n";
+					if(!esDniValido(textoDni.getText())) {
+						strErrores += "- DNI\n";
+					}
+					if(!esNombreValido(textoNombre.getText())) {
+						strErrores += "- NOMBRE\n";
+					}
+					if(!esNombreValido(textoApellidos.getText())) {
+						strErrores += "- APELLIDOS\n";
+					}
+					if(!esFechaValida(textoFechaNac.getText())) {
+						strErrores += "- FECHA NACIMIENTO\n";
+					}
+					if(!esTfnoValido(textoTfno.getText())) {
+						strErrores += "- TELEFONO\n";
+					}
+					JOptionPane.showMessageDialog(null, strErrores, "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		// Boton Cancelar
 		JButton botonCancelar = new JButton("Cancelar");
 		panelInferior.add(botonCancelar);
+		botonCancelar.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				VentanaRegistro.this.dispose();				
+			}
+		});
 
 		panelTotal.add(panelSuperior, BorderLayout.NORTH);
 		panelTotal.add(panelCentral, BorderLayout.CENTER);
 		panelTotal.add(panelInferior, BorderLayout.SOUTH);
 
 		JScrollPane scroller = new JScrollPane(panelTotal);
+		scroller.getVerticalScrollBar().setUnitIncrement(8);
 		
 		this.add(scroller);
-
 		setVisible(true);
+		
 	}
 
 	public static boolean esNombreValido(String nombre) {
-		// No puede ser nulo ni estar vacío
 		if (nombre == null || nombre.isBlank()) {
 			return false;
 		}
-		// No puede contener números
 		for (char c : nombre.toCharArray()) {
 			if (Character.isDigit(c)) {
 				return false;
@@ -171,6 +225,9 @@ public class VentanaRegistro extends JFrame{
 	public static boolean esDniValido(String dni) {
 		dni = dni.trim();
 		dni = dni.toUpperCase();
+		if (dni == null || dni.isBlank()) {
+			return false;
+		}
 		if(dni.length()!=9) {
 			return false;
 		}
@@ -185,6 +242,35 @@ public class VentanaRegistro extends JFrame{
 				if(!Character.isDigit(c)) {
 					return false;
 				}
+			}
+		}
+		return true;
+	}
+	public static boolean esFechaValida(String strFecha) {
+		if (strFecha == null || strFecha.isBlank()) {
+			return false;
+		}
+		try {
+			LocalDate fecha = LocalDate.parse(strFecha);
+			if(LocalDate.now().isBefore(fecha)) {
+				return false;
+			}
+		} catch (DateTimeParseException e) {
+			return false;
+		}
+		return true;
+	}
+	
+	public static boolean esTfnoValido(String tfno) {
+		if (tfno == null || tfno.isBlank()) {
+			return false;
+		}
+		if(tfno.length() != 9) {
+			return false;
+		}
+		for(char c: tfno.toCharArray()) {
+			if(!Character.isDigit(c)) {
+				return false;
 			}
 		}
 		return true;
