@@ -69,12 +69,7 @@ public class Medico extends Usuario {
 
 	@Override
 	public String toString() {
-		return "Medico [toString()=" + super.toString() + ", getDni()=" + getDni() + ", getNombre()=" + getNombre()
-				+ ", getApellidos()=" + getApellidos() + ", getFechaNacimiento()=" + getFechaNacimiento()
-				+ ", getSexo()=" + getSexo() + ", getTelefono()=" + getTelefono() + ", getEmail()=" + getEmail()
-				+ ", getDireccion()=" + getDireccion() + ", getContraseña()=" + getContraseña()
-				+ ", getCodigoUsuario()=" + getCodigoUsuario() + ", codMedico=" + codMedico + ", especialidad="
-				+ especialidad + ", lHorarios=" + lHorarios + ", duracionCita=" + duracionCita + "]";
+		return "Medico [codMedico=" + codMedico + ", especialidad=" + especialidad + ", lHorarios=" + lHorarios
+				+ ", duracionCita=" + duracionCita + "]";
 	}
-
 }

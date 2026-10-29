@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -20,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import domain.GestorHospital;
 import domain.enums.Sexo;
 import domain.personas.Usuario;
 
@@ -28,14 +31,15 @@ public class VentanaRegistro extends JFrame{
 	private static final long serialVersionUID = 1L;
 
 	public static void main(String[] args) {
-		new VentanaRegistro();
+		GestorHospital gestor = new GestorHospital();
+		new VentanaRegistro(gestor);
 	}
 
-	public VentanaRegistro() {
+	public VentanaRegistro(GestorHospital gestor) {
 		// Configuraciones de la ventana
 		setTitle("Registrar Nuevo Usuario");
 		setSize(420, 430);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setLocationRelativeTo(null); // Centrar en la pantalla
 
@@ -166,6 +170,7 @@ public class VentanaRegistro extends JFrame{
 							textoDireccion.getText(), 
 							textoContraseña.getText());
 					System.out.println(usuario);
+					gestor.addUsuario(usuario);
 				} else {
 					String strErrores = "Existen errores de formato en los siguientes campos: \n";
 					if(!esDniValido(textoDni.getText())) {

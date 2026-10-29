@@ -120,11 +120,11 @@ public class Usuario implements Serializable{
 	}
 
 
-	public String getContraseña() {
+	public String getContrasenia() {
 		return contrasenia;
 	}
 
-	public void setContraseña(String contrasenia) {
+	public void setContrasenia(String contrasenia) {
 		this.contrasenia = contrasenia;
 	}
 
