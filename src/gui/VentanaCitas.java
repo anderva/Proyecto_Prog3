@@ -4,8 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -18,12 +21,14 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import domain.Cita;
+import domain.GestorHospital;
 import domain.enums.Especialidad;
 import domain.enums.EstadoCita;
 import domain.enums.GrupoSanguineo;
 import domain.enums.Sexo;
 import domain.personas.Medico;
 import domain.personas.Paciente;
+import domain.personas.Usuario;
 
 public class VentanaCitas extends JFrame {
 
@@ -36,9 +41,9 @@ public class VentanaCitas extends JFrame {
 
 		// nombres de las columnas
 		private String[] cabeceras = { "ID", "Fecha", "Hora", "Paciente", "Médico", "Especialidad", "Estado" };
-		private ArrayList<Cita> citas;
+		private List<Cita> citas;
 
-		public ModeloCitas(ArrayList<Cita> citas) {
+		public ModeloCitas(List<Cita> citas) {
 			this.citas = citas;
 		}
 
@@ -95,7 +100,7 @@ public class VentanaCitas extends JFrame {
 	private JButton botonReprogramar;
 	private JButton botonRealizada;
 
-	public VentanaCitas(ArrayList<Medico> lMedicos, ArrayList<Cita> lCitas) {
+	public VentanaCitas(GestorHospital gestor, Usuario usuario) {
 		setTitle("OsakiDeusto - Citas");
 		setSize(800, 500);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE); // porque es ventana secundaria
@@ -116,14 +121,14 @@ public class VentanaCitas extends JFrame {
 		panelFiltro.add(labelMedico);
 		comboMedicos = new JComboBox<String>();
 		comboMedicos.addItem("Todos");
-		for (Medico m : lMedicos) {
+		for (Medico m : gestor.getlMedicos()) {
 			comboMedicos.addItem(m.getNombre() + " " + m.getApellidos() + " (" + m.getEspecialidad() + ")");
 		}
 		panelFiltro.add(comboMedicos);
 		panelSuperior.add(panelFiltro, BorderLayout.CENTER);
 
 		// panel central: tabla de citas 
-		modeloCitas = new ModeloCitas(lCitas);
+		modeloCitas = new ModeloCitas(gestor.getlCitas());
 		tablaCitas = new JTable(modeloCitas);
 		tablaCitas.getTableHeader().setFont(tablaCitas.getTableHeader().getFont().deriveFont(Font.BOLD));
 		JScrollPane scrollTabla = new JScrollPane(tablaCitas);
@@ -139,6 +144,14 @@ public class VentanaCitas extends JFrame {
 		panelInferior.add(botonReprogramar);
 		botonRealizada = new JButton("Marcar realizada");
 		panelInferior.add(botonRealizada);
+		//actionListener del boton
+		botonNuevaCita.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new VentanaPedirCita(gestor);
+			}
+		});
 
 		panelTotal.add(panelSuperior, BorderLayout.NORTH);
 		panelTotal.add(scrollTabla, BorderLayout.CENTER);
@@ -150,41 +163,7 @@ public class VentanaCitas extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		// medicos de prueba
-		ArrayList<Medico> medicos = new ArrayList<Medico>();
-		Medico m1 = new Medico("12345678A", "Aitor", "Garcia", LocalDate.of(1980, 1, 15), Sexo.HOMBRE, 611111111,
-				"garcia@osaki.eus", "Bilbao", "abcd", Especialidad.CARDIOLOGIA, new ArrayList<>(), 30);
-		Medico m2 = new Medico("12345678B", "Ander", "Vallejo", LocalDate.of(1975, 7, 2), Sexo.HOMBRE, 622222222,
-				"vallejo@osaki.eus", "Bilbao", "abcd", Especialidad.PEDIATRIA, new ArrayList<>(), 20);
-		Medico m3 = new Medico("12345678C", "Miren", "Ortiz", LocalDate.of(1983, 4, 22), Sexo.MUJER, 633333333,
-				"ortiz@osaki.eus", "Getxo", "abcd", Especialidad.TRAUMATOLOGIA, new ArrayList<>(), 30);
-		medicos.add(m1);
-		medicos.add(m2);
-		medicos.add(m3);
-
-		// pacientes de prueba
-		Paciente p1 = new Paciente("11111111D", "Mikel", "Arana", LocalDate.of(2000, 3, 10), Sexo.HOMBRE, 644444444,
-				"mikel@gmail.com", "Bilbao", "1234", GrupoSanguineo.A_PLUS);
-		Paciente p2 = new Paciente("22222222E", "Ane", "Goikoetxea", LocalDate.of(1995, 8, 5), Sexo.MUJER, 655555555,
-				"ane@gmail.com", "Barakaldo", "1234", GrupoSanguineo.ZERO_PLUS);
-		Paciente p3 = new Paciente("33333333F", "Jon", "Etxeberria", LocalDate.of(2015, 12, 1), Sexo.HOMBRE, 666666666,
-				"jon@gmail.com", "Bilbao", "1234", GrupoSanguineo.B_MINUS);
-		Paciente p4 = new Paciente("44444444G", "Laura", "Martinez", LocalDate.of(1970, 6, 18), Sexo.MUJER, 677777777,
-				"laura@gmail.com", "Getxo", "1234", GrupoSanguineo.AB_PLUS);
-
-		// citas de prueba
-		ArrayList<Cita> citas = new ArrayList<Cita>();
-		citas.add(new Cita(0, p1, m1, LocalDate.of(2026, 10, 20), EstadoCita.REALIZADA, "09:00"));
-		citas.add(new Cita(0, p2, m3, LocalDate.of(2026, 10, 21), EstadoCita.CANCELADA, "10:30"));
-		citas.add(new Cita(0, p4, m1, LocalDate.of(2026, 10, 22), EstadoCita.REALIZADA, "11:00"));
-		citas.add(new Cita(0, p3, m2, LocalDate.of(2026, 10, 27), EstadoCita.PENDIENTE, "09:00"));
-		citas.add(new Cita(0, p1, m2, LocalDate.of(2026, 10, 27), EstadoCita.PENDIENTE, "09:30"));
-		citas.add(new Cita(0, p2, m1, LocalDate.of(2026, 10, 28), EstadoCita.PENDIENTE, "10:00"));
-		citas.add(new Cita(0, p4, m3, LocalDate.of(2026, 10, 28), EstadoCita.PENDIENTE, "12:00"));
-		citas.add(new Cita(0, p3, m1, LocalDate.of(2026, 10, 29), EstadoCita.PENDIENTE, "11:30"));
-		citas.add(new Cita(0, p1, m3, LocalDate.of(2026, 10, 30), EstadoCita.PENDIENTE, "13:00"));
-		citas.add(new Cita(0, p2, m2, LocalDate.of(2026, 11, 3), EstadoCita.PENDIENTE, "09:00"));
-
-		new VentanaCitas(medicos, citas);
+		GestorHospital gestor = new GestorHospital();
+		new VentanaCitas(gestor, null);
 	}
 }

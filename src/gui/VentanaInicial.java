@@ -84,7 +84,8 @@ public class VentanaInicial extends JFrame {
 						if (email.equals(u.getEmail()) && contrasenia.equals(u.getContrasenia())) {
 							haIniciado = true;
 							VentanaInicial.this.dispose();
-							// Pasar a la siguiente ventana
+							new VentanaCitas(gestor, u);
+							break;
 						}
 					}
 				}

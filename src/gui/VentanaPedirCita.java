@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.time.LocalDate;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -16,14 +14,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import domain.enums.Especialidad;
-import domain.enums.Sexo;
+import domain.GestorHospital;
 import domain.personas.Medico;
 
 public class VentanaPedirCita extends JFrame{
 	private static final long serialVersionUID = 1L;
 	
-	public VentanaPedirCita(ArrayList<Medico> lMedicos) {
+	public VentanaPedirCita(GestorHospital gestor) {
 		setTitle("OsakiDeusto - Pedir cita");
 		setSize(420, 430);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE); //porque es ventana secundaria
@@ -53,7 +50,7 @@ public class VentanaPedirCita extends JFrame{
 		JLabel labelMedico = new JLabel("Médico: ");
 		medico.add(labelMedico);
 		JComboBox<String> comboMedicos = new JComboBox<String>();
-		for (Medico m : lMedicos) {
+		for (Medico m : gestor.getlMedicos()) {
 			comboMedicos.addItem(m.getNombre() + " " + m.getApellidos() + " (" + m.getEspecialidad() + ")");
 		}
 		medico.add(comboMedicos);
@@ -108,13 +105,8 @@ public class VentanaPedirCita extends JFrame{
 	}
 	
 	public static void main(String[] args) {
-		// Médicos de prueba
-		ArrayList<Medico> medicos = new ArrayList<Medico>();
-		medicos.add(new Medico("12345678A", "Poyete", "Garcia", LocalDate.of(1980, 1, 15), Sexo.MUJER, 611111111,
-				"filete@osaki.eus", "Bilbao", "abcd", Especialidad.CARDIOLOGIA, new ArrayList<>(), 30));
-		medicos.add(new Medico("12345678B", "Anderva", "Lopez", LocalDate.of(1975, 7, 2), Sexo.HOMBRE, 622222222,
-				"vallejo@osaki.eus", "Bilbao", "abcd", Especialidad.PEDIATRIA, new ArrayList<>(), 20));
-
-		new VentanaPedirCita(medicos);	}
+		GestorHospital gestor = new GestorHospital();
+		new VentanaPedirCita(gestor);
+	}
 
 }
