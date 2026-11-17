@@ -15,6 +15,7 @@ public class Cita {
 	private LocalDate fechaCita;
 	private EstadoCita estado;
 	private String hora;
+	private String motivo; // motivo de la consulta que escribe el paciente
 	
 	
 	//Constructores
@@ -31,6 +32,15 @@ public class Cita {
 		this.fechaCita = fechaCita;
 		this.estado = estado;
 		this.hora = hora;
+		this.motivo = "";
+	}
+	
+
+	// Constructor con el motivo de la consulta (lo usa la ventana de pedir cita)
+	public Cita(int idCita, Paciente paciente, Medico medico, LocalDate fechaCita, EstadoCita estado, String hora,
+			String motivo) {
+		this(idCita, paciente, medico, fechaCita, estado, hora);
+		this.motivo = motivo;
 	}
 
 	//Getters y Setters
@@ -92,12 +102,23 @@ public class Cita {
 	public void setHora(String hora) {
 		this.hora = hora;
 	}
+	
+
+
+	public String getMotivo() {
+		return motivo;
+	}
+
+
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
+	}
 
 
 	@Override
 	public String toString() {
 		return "Cita [idCita=" + idCita + ", paciente=" + paciente + ", medico=" + medico + ", fechaCita=" + fechaCita
-				+ ", estado=" + estado + ", hora=" + hora + "]";
+				+ ", estado=" + estado + ", hora=" + hora + ", motivo=" + motivo + "]";
 	}
 
 
