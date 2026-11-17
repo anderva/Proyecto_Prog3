@@ -175,10 +175,19 @@ public class GestorHospital {
 		addPaciente(p2);
 		addUsuario(p1);
 		addUsuario(p2);
+		
+		addCita(new Cita(0, p1, m1, LocalDate.of(2026, 11, 20), EstadoCita.PENDIENTE, "09:00", "Revisión del electrocardiograma"));
+		addCita(new Cita(0, p2, m3, LocalDate.of(2026, 11, 21), EstadoCita.PENDIENTE, "10:30", "Dolor de rodilla al correr"));
+		addCita(new Cita(0, p1, m2, LocalDate.of(2026, 11, 10), EstadoCita.REALIZADA, "11:00", "Vacuna de la gripe"));
 
-		addCita(new Cita(0, p1, m1, LocalDate.of(2026, 11, 20), EstadoCita.PENDIENTE, "09:00"));
-		addCita(new Cita(0, p2, m3, LocalDate.of(2026, 11, 21), EstadoCita.PENDIENTE, "10:30"));
-		addCita(new Cita(0, p1, m2, LocalDate.of(2026, 11, 10), EstadoCita.REALIZADA, "11:00"));
+		// citas con fechas relativas a hoy para que en la demo siempre haya citas
+		// de hoy, de mañana, pasadas y canceladas
+		LocalDate hoy = LocalDate.now();
+		addCita(new Cita(0, p2, m1, hoy, EstadoCita.PENDIENTE, "13:00", "Palpitaciones por la noche"));
+		addCita(new Cita(0, p1, m3, hoy.plusDays(1), EstadoCita.PENDIENTE, "09:30", "Esguince de tobillo"));
+		addCita(new Cita(0, p2, m2, hoy.plusDays(7), EstadoCita.PENDIENTE, "12:00", "Revisión anual"));
+		addCita(new Cita(0, p1, m1, hoy.minusDays(3), EstadoCita.CANCELADA, "10:00", "Control de tensión"));
+		addCita(new Cita(0, p2, m3, hoy.minusDays(14), EstadoCita.REALIZADA, "09:00", "Radiografía de muñeca"));
 	}
 }
 
