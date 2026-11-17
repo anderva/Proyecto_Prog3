@@ -1,5 +1,8 @@
 package domain;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +15,13 @@ import domain.personas.Paciente;
 import domain.personas.Usuario;
 
 public class GestorHospital {
+	
+	// horas a las que se pueden pedir citas (las usan las ventanas de citas)
+	public static final String[] HORAS_CITA = { "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00",
+			"12:30", "13:00" };
+	// formato en el que se escriben y se muestran las fechas de las citas
+	public static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
 	private List<Usuario> lUsuarios;
 	private List<Paciente> lPacientes;
 	private List<Medico> lMedicos;
@@ -94,6 +104,54 @@ public class GestorHospital {
 			this.setlMedicos(lMedicos);
 		}
 	}
+	
+	// Devuelve las horas a las que se puede poner una cita a ese medico y a ese
+	// paciente ese dia. Se quitan las horas en las que el medico o el paciente
+	// ya tienen una cita pendiente y, si la fecha es hoy, las horas que ya han pasado.
+	// citaExcluida es la cita que se esta modificando (su hora cuenta como libre),
+	// si se esta pidiendo una cita nueva se pasa null.
+	public List<String> getHorasLibres(Medico medico, Paciente paciente, LocalDate fecha, Cita citaExcluida) {
+		List<String> horasLibres = new ArrayList<String>();
+		for (String hora : HORAS_CITA) {
+			boolean libre = true;
+
+			// si la cita es para hoy no se puede pedir una hora que ya ha pasado
+			if (fecha.equals(LocalDate.now()) && LocalTime.parse(hora).isBefore(LocalTime.now())) {
+				libre = false;
+			}
+
+			// se mira si el medico o el paciente ya tienen una cita pendiente a esa hora
+			for (Cita c : lCitas) {
+				if (c != citaExcluida && c.getEstado() == EstadoCita.PENDIENTE && c.getFechaCita().equals(fecha)
+						&& c.getHora().equals(hora) && (c.getMedico() == medico || c.getPaciente() == paciente)) {
+					libre = false;
+				}
+			}
+
+			if (libre) {
+				horasLibres.add(hora);
+			}
+		}
+		return horasLibres;
+	}
+
+	// Convierte un texto con formato dd/MM/yyyy en un LocalDate.
+	// Devuelve null si el texto no es una fecha valida (por ejemplo 31/02/2026)
+	public static LocalDate parsearFecha(String texto) {
+		try {
+			LocalDate fecha = LocalDate.parse(texto, FORMATO_FECHA);
+			// LocalDate.parse convierte 31/02 en 28/02 sin dar error, por eso
+			// se vuelve a pasar a texto y se comprueba que es el mismo dia
+			if (!fecha.format(FORMATO_FECHA).equals(texto)) {
+				return null;
+			}
+			return fecha;
+		} catch (DateTimeParseException e) {
+			return null;
+		}
+	}
+
+	
 	//Datos de prueba para no tener que registrarse cada vez
 	private void cargarDatosPrueba() {
 		Medico m1 = new Medico("12345678A", "Aitor", "Garcia", LocalDate.of(2001, 1, 1), Sexo.HOMBRE, 611111111,
