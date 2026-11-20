@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -92,6 +94,13 @@ public class VentanaPedirCita extends JFrame{
 		panelInferior.setBorder(BorderFactory.createEmptyBorder(20, 0, 5, 0));
 		JButton botonCancelar = new JButton("Cancelar");
 		panelInferior.add(botonCancelar);
+		botonCancelar.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				VentanaPedirCita.this.dispose();
+			}
+		});
 		JButton botonConfirmar = new JButton("Confirmar");
 		panelInferior.add(botonConfirmar);
 
