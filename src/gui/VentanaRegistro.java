@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 
 import domain.GestorHospital;
 import domain.enums.Sexo;
+import domain.personas.Paciente;
 import domain.personas.Usuario;
 
 public class VentanaRegistro extends JFrame{
@@ -157,20 +158,27 @@ public class VentanaRegistro extends JFrame{
 					esNombreValido(textoNombre.getText()) &&
 					esNombreValido(textoApellidos.getText()) &&
 					esTfnoValido(textoTfno.getText()) &&
-					esFechaValida(textoFechaNac.getText())) {
+					esFechaValida(textoFechaNac.getText()) &&
+					esEmailValido(textoEmail.getText()) &&
+					!textoContraseña.getText().isBlank()) {
 					
-					Usuario usuario = new Usuario(	
+					Paciente paciente = new Paciente(	
 							textoDni.getText(), 
 							textoNombre.getText(),
 							textoApellidos.getText(), 
 							LocalDate.parse(textoFechaNac.getText()),
 							Sexo.valueOf(comboSexo.getSelectedItem().toString()), 
 							Integer.parseInt(textoTfno.getText()), 
-							textoEmail.getText(),
+							textoEmail.getText().trim(),
 							textoDireccion.getText(), 
-							textoContraseña.getText());
-					System.out.println(usuario);
-					gestor.addUsuario(usuario);
+							textoContraseña.getText(),
+							null);
+					if (gestor.registrarPaciente(paciente)) {
+						JOptionPane.showMessageDialog(null, "Usuario registrado correctamente. Ya puedes iniciar sesión.");
+						VentanaRegistro.this.dispose();
+					} else {
+						JOptionPane.showMessageDialog(null, "Ya existe un usuario con ese DNI o ese correo electrónico", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				} else {
 					String strErrores = "Existen errores de formato en los siguientes campos: \n";
 					if(!esDniValido(textoDni.getText())) {
@@ -187,6 +195,12 @@ public class VentanaRegistro extends JFrame{
 					}
 					if(!esTfnoValido(textoTfno.getText())) {
 						strErrores += "- TELEFONO\n";
+					}
+					if(!esEmailValido(textoEmail.getText())) {
+						strErrores += "- CORREO ELECTRÓNICO\n";
+					}
+					if(textoContraseña.getText().isBlank()) {
+						strErrores += "- CONTRASEÑA\n";
 					}
 					JOptionPane.showMessageDialog(null, strErrores, "Error", JOptionPane.ERROR_MESSAGE);
 				}
@@ -264,6 +278,10 @@ public class VentanaRegistro extends JFrame{
 			return false;
 		}
 		return true;
+	}
+	
+	public static boolean esEmailValido(String email) {
+		return email != null && !email.isBlank() && email.contains("@");
 	}
 	
 	public static boolean esTfnoValido(String tfno) {

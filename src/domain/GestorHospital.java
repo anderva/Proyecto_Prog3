@@ -26,6 +26,8 @@ public class GestorHospital {
 	private List<Paciente> lPacientes;
 	private List<Medico> lMedicos;
 	private List<Cita> lCitas;
+	public static final String NOMBRE_BD = "Osaki.db";
+	private BD bd;
 	
 	public GestorHospital(List<Usuario> lUsuarios, List<Paciente> lPacientes, List<Medico> lMedicos) {
 		super();
@@ -39,7 +41,25 @@ public class GestorHospital {
 		this.setlPacientes(new ArrayList<Paciente>());
 		this.setlUsuarios(new ArrayList<Usuario>());
 		this.setlCitas(new ArrayList<Cita>());
-		cargarDatosPrueba();
+		bd = new BD();
+		bd.initBD(NOMBRE_BD);
+		bd.crearTablas();
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> bd.closeBD()));
+		if (bd.estaVacia()) {
+			// primera vez que se abre el programa: los datos de prueba se guardan en la BD
+			cargarDatosPrueba();
+		} else {
+			cargarDatosBD();
+		}
+	}
+	private void cargarDatosBD() {
+		this.setlMedicos(bd.obtenerMedicos());
+		this.setlPacientes(bd.obtenerPacientes());
+		this.setlCitas(bd.obtenerCitas(lPacientes, lMedicos));
+		List<Usuario> usuarios = new ArrayList<Usuario>();
+		usuarios.addAll(lMedicos);
+		usuarios.addAll(lPacientes);
+		this.setlUsuarios(usuarios);
 	}
 	public List<Usuario> getlUsuarios() {
 		return lUsuarios;
@@ -65,9 +85,58 @@ public class GestorHospital {
 	public void setlCitas(List<Cita> lCitas) {
 		this.lCitas = lCitas;
 	}
-	public void addCita(Cita cita) {
+	public boolean addCita(Cita cita) {
+		if (bd != null && !bd.insertarCita(cita)) {
+			return false;
+		}
 		lCitas.add(cita);
+		return true;
 	}
+	
+	public boolean modificarCita(Cita cita, Medico medico, LocalDate fecha, String hora, String motivo) {
+		Medico medicoAntes = cita.getMedico();
+		LocalDate fechaAntes = cita.getFechaCita();
+		String horaAntes = cita.getHora();
+		String motivoAntes = cita.getMotivo();
+
+		cita.setMedico(medico);
+		cita.setFechaCita(fecha);
+		cita.setHora(hora);
+		cita.setMotivo(motivo);
+		if (bd != null && !bd.modificarCita(cita)) {
+			cita.setMedico(medicoAntes);
+			cita.setFechaCita(fechaAntes);
+			cita.setHora(horaAntes);
+			cita.setMotivo(motivoAntes);
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean cancelarCita(Cita cita) {
+		return cambiarEstado(cita, EstadoCita.CANCELADA);
+	}
+
+	public boolean marcarRealizada(Cita cita) {
+		return cambiarEstado(cita, EstadoCita.REALIZADA);
+	}
+
+	private boolean cambiarEstado(Cita cita, EstadoCita estado) {
+		if (bd != null && !bd.cambiarEstadoCita(cita.getIdCita(), estado)) {
+			return false;
+		}
+		cita.setEstado(estado);
+		return true;
+	}
+
+	public boolean borrarCita(Cita cita) {
+		if (bd != null && !bd.borrarCita(cita.getIdCita())) {
+			return false;
+		}
+		lCitas.remove(cita);
+		return true;
+	}
+	
 	public void addUsuario(Usuario usuario) {
 		List<Usuario> lUsuarios = this.getlUsuarios();
 		lUsuarios.add(usuario);
@@ -80,31 +149,59 @@ public class GestorHospital {
 			this.setlUsuarios(lUsuarios);
 		}
 	}
-	public void addPaciente(Paciente paciente) {
+	public boolean addPaciente(Paciente paciente) {
+		if (bd != null && !bd.insertarPaciente(paciente)) {
+			return false;
+		}
 		List<Paciente> lPacientes = this.getlPacientes();
 		lPacientes.add(paciente);
 		this.setlPacientes(lPacientes);
+		return true;
 	}
 	public void removePaciente(Paciente paciente) {
 		List<Paciente> lPacientes = this.getlPacientes();
 		if(lPacientes.contains(paciente)) {
+			if (bd != null) {
+				bd.borrarPaciente(paciente.getDni());
+			}
 			lPacientes.remove(paciente);
 			this.setlPacientes(lPacientes);
+			lCitas.removeIf(c -> c.getPaciente() == paciente);
 		}
 	}
-	public void addMedico(Medico medico) {
+	public boolean addMedico(Medico medico) {
+		if (bd != null && !bd.insertarMedico(medico)) {
+			return false;
+		}
 		List<Medico> lMedicos = this.getlMedicos();
 		lMedicos.add(medico);
 		this.setlMedicos(lMedicos);
+		return true;
 	}
 	public void removeMedico(Medico medico) {
 		List<Medico> lMedicos = this.getlMedicos();
 		if(lMedicos.contains(medico)) {
+			if (bd != null) {
+				bd.borrarMedico(medico.getDni());
+			}
 			lMedicos.remove(medico);
 			this.setlMedicos(lMedicos);
+			lCitas.removeIf(c -> c.getMedico() == medico);
 		}
 	}
 	
+	public boolean registrarPaciente(Paciente paciente) {
+		for (Usuario u : lUsuarios) {
+			if (u.getDni().equalsIgnoreCase(paciente.getDni()) || u.getEmail().equalsIgnoreCase(paciente.getEmail())) {
+				return false;
+			}
+		}
+		if (!addPaciente(paciente)) {
+			return false;
+		}
+		addUsuario(paciente);
+		return true;
+	}
 	// Devuelve las horas a las que se puede poner una cita a ese medico y a ese
 	// paciente ese dia. Se quitan las horas en las que el medico o el paciente
 	// ya tienen una cita pendiente y, si la fecha es hoy, las horas que ya han pasado.

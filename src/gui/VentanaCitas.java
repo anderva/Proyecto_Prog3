@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +20,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -27,6 +29,7 @@ import javax.swing.SwingConstants;
 
 import domain.Cita;
 import domain.GestorHospital;
+import domain.enums.EstadoCita;
 import domain.enums.Sexo;
 import domain.personas.Medico;
 import domain.personas.Paciente;
@@ -48,6 +51,7 @@ public class VentanaCitas extends JFrame {
 	private JButton botonModificar;
 	private JButton botonCancelarCita;
 	private JButton botonRealizada;
+	private JButton botonBorrar;
 
 	public VentanaCitas(GestorHospital gestor, Usuario usuario) {
 		setTitle("OsakiDeusto - Citas");
@@ -119,6 +123,9 @@ public class VentanaCitas extends JFrame {
 		botonRealizada = new JButton("Marcar realizada", RendererCitas.cargarIcono("boton_realizada"));
 		botonRealizada.setToolTipText("Solo se pueden marcar las citas de hoy o de días anteriores");
 		panelBotones.add(botonRealizada);
+		botonBorrar = new JButton("Borrar cita");
+		botonBorrar.setToolTipText("Eliminar la cita seleccionada");
+		panelBotones.add(botonBorrar);
 		panelSur.add(panelBotones, BorderLayout.NORTH);
 
 		//listeners 
@@ -127,7 +134,84 @@ public class VentanaCitas extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new VentanaPedirCita(gestor);
+				new VentanaPedirCita(gestor, usuario, null, () -> actualizarTabla());
+			}
+		});
+		
+		botonModificar.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Cita cita = citaParaGestionar();
+				if (cita == null) {
+					return;
+				}
+				if (cita.getEstado() != EstadoCita.PENDIENTE) {
+					avisar("Solo se pueden modificar las citas pendientes");
+					return;
+				}
+				new VentanaPedirCita(gestor, usuario, cita, () -> actualizarTabla());
+			}
+		});
+		
+		botonCancelarCita.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Cita cita = citaParaGestionar();
+				if (cita == null) {
+					return;
+				}
+				if (cita.getEstado() != EstadoCita.PENDIENTE) {
+					avisar("Solo se pueden cancelar las citas pendientes");
+					return;
+				}
+				if (confirmar("¿Seguro que quieres cancelar esta cita?")) {
+					if (!gestor.cancelarCita(cita)) {
+						avisar("No se ha podido guardar el cambio en la base de datos");
+					}
+					actualizarTabla();
+				}
+			}
+		});
+		
+		botonRealizada.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Cita cita = citaParaGestionar();
+				if (cita == null) {
+					return;
+				}
+				if (cita.getEstado() != EstadoCita.PENDIENTE) {
+					avisar("Solo se pueden marcar como realizadas las citas pendientes");
+					return;
+				}
+				if (cita.getFechaCita().isAfter(LocalDate.now())) {
+					avisar("Solo se pueden marcar como realizadas las citas de hoy o de días anteriores");
+					return;
+				}
+				if (!gestor.marcarRealizada(cita)) {
+					avisar("No se ha podido guardar el cambio en la base de datos");
+				}
+				actualizarTabla();
+			}
+		});
+		
+		botonBorrar.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Cita cita = citaParaGestionar();
+				if (cita == null) {
+					return;
+				}
+				if (confirmar("¿Seguro que quieres borrar esta cita? No se puede deshacer.")) {
+					if (!gestor.borrarCita(cita)) {
+						avisar("No se ha podido borrar la cita de la base de datos");
+					}
+					actualizarTabla();
+				}
 			}
 		});
 
@@ -203,6 +287,10 @@ public class VentanaCitas extends JFrame {
 	private void actualizarTabla() {
 		Cita seleccionada = getCitaSeleccionada(); // para volver a seleccionarla despues
 		List<Cita> citas = new ArrayList<Cita>(gestor.getlCitas());
+		if (usuario instanceof Paciente) {
+			Paciente paciente = (Paciente) usuario;
+			citas.removeIf(cita -> !cita.getPaciente().getDni().equals(paciente.getDni()));
+		}
 
 		// ordenar por fecha y, si es el mismo dia, por hora
 		Collections.sort(citas, (c1, c2) -> {
@@ -234,6 +322,38 @@ public class VentanaCitas extends JFrame {
 				return;
 			}
 		}
+	}
+	
+	//botones
+	
+	private Cita citaParaGestionar() {
+		Cita cita = getCitaSeleccionada();
+		if (cita == null) {
+			avisar("Selecciona primero una cita de la tabla");
+			return null;
+		}
+		if (!puedeGestionar(cita)) {
+			avisar("Solo puedes gestionar tus propias citas");
+			return null;
+		}
+		return cita;
+	}
+	
+	private boolean puedeGestionar(Cita cita) {
+		if (usuario instanceof Paciente) {
+			return cita.getPaciente() == usuario;
+		} else if (usuario instanceof Medico) {
+			return cita.getMedico() == usuario;
+		}
+		return true;
+	}
+	
+	private void avisar(String mensaje) {
+		JOptionPane.showMessageDialog(this, mensaje);
+	}
+	
+	private boolean confirmar(String mensaje) {
+		return JOptionPane.showConfirmDialog(this, mensaje, "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 	}
 
 	public static void main(String[] args) {
