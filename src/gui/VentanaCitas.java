@@ -46,6 +46,8 @@ public class VentanaCitas extends JFrame {
 
 	// componentes que van a usar los listeners
 	private JComboBox<String> comboMedicos;
+	private JComboBox<String> comboEstados;
+	private JLabel labelNumCitas; // cuantas citas se estan viendo con los filtros puestos
 	private JTable tablaCitas;
 	private JButton botonNuevaCita;
 	private JButton botonModificar;
@@ -95,8 +97,43 @@ public class VentanaCitas extends JFrame {
 			comboMedicos.addItem(m.getNombre() + " " + m.getApellidos() + " ("
 					+ RendererCitas.textoEspecialidad(m.getEspecialidad()) + ")");
 		}
+		// si entra un medico, al abrir la ventana se ven directamente sus citas
+		if (usuario instanceof Medico) {
+			int posicion = gestor.getlMedicos().indexOf(usuario);
+			if (posicion != -1) {
+				comboMedicos.setSelectedIndex(posicion + 1); // +1 porque el primero es "Todos"
+			}
+		}
 		panelFiltro.add(comboMedicos);
+		panelFiltro.add(new JLabel("   Estado: "));
+		
+		comboEstados = new JComboBox<String>();
+		comboEstados.addItem("Todos");
+		for (EstadoCita estado : EstadoCita.values()) {
+			comboEstados.addItem(RendererCitas.textoEstado(estado));
+		}
+		panelFiltro.add(comboEstados);
 
+		labelNumCitas = new JLabel();
+		labelNumCitas.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 12));
+		panelFiltro.add(labelNumCitas);
+
+		// cada vez que se cambia un filtro se vuelve a rellenar la tabla
+		comboMedicos.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actualizarTabla();
+			}
+		});
+		comboEstados.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actualizarTabla();
+			}
+		});
+		
 		panelSuperior.add(panelFiltro, BorderLayout.CENTER);
 
 		//panel central: tabla de citas
@@ -283,7 +320,7 @@ public class VentanaCitas extends JFrame {
 
 	//tabla
 
-	// vuelve a rellenar la tabla con todas las citas, ordenadas por fecha y hora
+	// vuelve a rellenar la tabla con las citas que cumplen los filtros, ordenadas por fecha y hora
 	private void actualizarTabla() {
 		Cita seleccionada = getCitaSeleccionada(); // para volver a seleccionarla despues
 		List<Cita> citas = new ArrayList<Cita>(gestor.getlCitas());
@@ -291,7 +328,22 @@ public class VentanaCitas extends JFrame {
 			Paciente paciente = (Paciente) usuario;
 			citas.removeIf(cita -> !cita.getPaciente().getDni().equals(paciente.getDni()));
 		}
+		int totalCitas = citas.size(); // citas que puede ver este usuario sin filtros
 
+		// filtro por medico (la posicion 0 es "Todos")
+		int posMedico = comboMedicos.getSelectedIndex();
+		if (posMedico > 0) {
+			Medico medico = gestor.getlMedicos().get(posMedico - 1);
+			citas.removeIf(cita -> cita.getMedico() != medico);
+		}
+
+		// filtro por estado (la posicion 0 es "Todos", el resto va en el orden del enum)
+		int posEstado = comboEstados.getSelectedIndex();
+		if (posEstado > 0) {
+			EstadoCita estado = EstadoCita.values()[posEstado - 1];
+			citas.removeIf(cita -> cita.getEstado() != estado);
+		}
+		
 		// ordenar por fecha y, si es el mismo dia, por hora
 		Collections.sort(citas, (c1, c2) -> {
 			int resultado = c1.getFechaCita().compareTo(c2.getFechaCita());
@@ -303,6 +355,12 @@ public class VentanaCitas extends JFrame {
 
 		modeloCitas.actualizarCitas(citas);
 		seleccionarCita(seleccionada);
+
+		if (citas.size() == totalCitas) {
+			labelNumCitas.setText("   " + totalCitas + " citas");
+		} else {
+			labelNumCitas.setText("   Mostrando " + citas.size() + " de " + totalCitas + " citas");
+		}
 	}
 
 	// cita de la fila seleccionada o null si no hay ninguna
