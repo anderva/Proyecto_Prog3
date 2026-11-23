@@ -18,6 +18,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import domain.Cita;
 import domain.GestorHospital;
@@ -139,6 +141,41 @@ public class VentanaPedirCita extends JFrame{
 			comboHoras.setSelectedItem(citaModificar.getHora());
 			textoMotivo.setText(citaModificar.getMotivo());
 		}
+		
+		
+		// cada vez que cambia el medico, el paciente o la fecha se vuelven a calcular las horas
+		comboMedicos.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actualizarHoras();
+			}
+		});
+		if (comboPacientes != null) {
+			comboPacientes.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					actualizarHoras();
+				}
+			});
+		}
+		textoFecha.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				actualizarHoras(); // se ha escrito algo
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				actualizarHoras(); // se ha borrado algo
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// solo salta con cambios de estilo
+			}
+		});
+		actualizarHoras(); // por si se esta modificando una cita y ya hay fecha
 
 		// Panel Inferior
 		JPanel panelInferior = new JPanel(new GridLayout(1, 2, 10, 10));
@@ -170,6 +207,38 @@ public class VentanaPedirCita extends JFrame{
 
 		setVisible(true);
 	}
+	
+	
+	// Rellena el combo de horas solo con las horas libres para ese medico y ese paciente en esa fecha
+	private void actualizarHoras() {
+		String horaElegida = (String) comboHoras.getSelectedItem();
+		comboHoras.removeAllItems();
+
+		LocalDate fecha = GestorHospital.parsearFecha(textoFecha.getText().trim());
+		if (fecha == null || comboMedicos.getSelectedIndex() == -1) {
+			// si todavia no hay una hora valida, se ponen todas las horas
+			for (String h : GestorHospital.HORAS_CITA) {
+				comboHoras.addItem(h);
+			}
+			comboHoras.setSelectedItem(horaElegida);
+			return;
+		}
+
+		Medico medico = gestor.getlMedicos().get(comboMedicos.getSelectedIndex());
+		Paciente pacienteCita = paciente;
+		if (pacienteCita == null && comboPacientes != null && comboPacientes.getSelectedIndex() != -1) {
+			pacienteCita = gestor.getlPacientes().get(comboPacientes.getSelectedIndex());
+		}
+
+		// horas libres de ese medico y ese paciente ese dia
+		List<String> libres = gestor.getHorasLibres(medico, pacienteCita, fecha, citaModificar);
+		for (String h : libres) {
+			comboHoras.addItem(h);
+		}
+		comboHoras.setSelectedItem(horaElegida); // si sigue libre, se vuelve a seleccionar
+	}
+	
+	
 	
 	// guarda los datos en la BD despues de comprobarlos
 	private void guardarCita() {
