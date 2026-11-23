@@ -166,7 +166,7 @@ public class VentanaRegistro extends JFrame{
 							textoDni.getText(), 
 							textoNombre.getText(),
 							textoApellidos.getText(), 
-							LocalDate.parse(textoFechaNac.getText()),
+							LocalDate.parse(textoFechaNac.getText().trim()),
 							Sexo.valueOf(comboSexo.getSelectedItem().toString()), 
 							Integer.parseInt(textoTfno.getText()), 
 							textoEmail.getText().trim(),
@@ -270,7 +270,7 @@ public class VentanaRegistro extends JFrame{
 			return false;
 		}
 		try {
-			LocalDate fecha = LocalDate.parse(strFecha);
+			LocalDate fecha = LocalDate.parse(strFecha.trim());
 			if(LocalDate.now().isBefore(fecha)) {
 				return false;
 			}

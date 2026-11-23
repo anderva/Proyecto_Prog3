@@ -6,20 +6,22 @@ public class Receta {
 	// Parametros
 	private static int contadorRecetas;
 	private int idReceta;
-	private Medicamento medicamento;
+	private String dosis;
+	private String duración;
 	private String indicaciones;
 	private ArrayList<Medicamento> lMedicamentos;
 
 	public Receta() {
-
+		this.lMedicamentos = new ArrayList<Medicamento>();
 	}
 
-	public Receta(Medicamento medicamento, String dosis, String duracion, String indicaciones) {
+	public Receta(String dosis, String duracion, String indicaciones, ArrayList<Medicamento> lMedicamentos) {
 		contadorRecetas++;
 		this.idReceta = contadorRecetas;
-		this.medicamento = medicamento;
 		this.indicaciones = indicaciones;
-		this.lMedicamentos = new ArrayList<Medicamento>();
+		this.dosis = dosis;
+		this.duración = duracion;
+		this.lMedicamentos = lMedicamentos;
 	}
 
 	public static int getContadorRecetas() {
@@ -38,13 +40,6 @@ public class Receta {
 		this.idReceta = idReceta;
 	}
 
-	public Medicamento getMedicamento() {
-		return medicamento;
-	}
-
-	public void setMedicamento(Medicamento medicamento) {
-		this.medicamento = medicamento;
-	}
 
 	public String getIndicaciones() {
 		return indicaciones;
@@ -62,10 +57,30 @@ public class Receta {
 		this.lMedicamentos = lMedicamentos;
 	}
 
+	
+
+	public String getDosis() {
+		return dosis;
+	}
+
+	public void setDosis(String dosis) {
+		this.dosis = dosis;
+	}
+
+	public String getDuración() {
+		return duración;
+	}
+
+	public void setDuración(String duración) {
+		this.duración = duración;
+	}
+	
+	
+
 	@Override
 	public String toString() {
-		return "Receta [idReceta=" + idReceta + ", medicamento=" + medicamento + ", indicaciones=" + indicaciones
-				+ ", lMedicamentos=" + lMedicamentos + "]";
+		return "Receta [idReceta=" + idReceta + ", dosis=" + dosis + ", duración=" + duración + ", indicaciones="
+				+ indicaciones + ", lMedicamentos=" + lMedicamentos + "]";
 	}
 
 	public void añadirMedicamento(Medicamento m) {

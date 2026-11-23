@@ -20,6 +20,7 @@ public class Medico extends Usuario {
 	public Medico(String dni, String nombre, String apellidos, LocalDate fechaNacimiento, Sexo sexo, int telefono,
 			String email, String direccion, String contrasenia) {
 		super(dni, nombre, apellidos, fechaNacimiento, sexo, telefono, email, direccion, contrasenia);
+		this.lHorarios = new ArrayList<Horario>();
 
 	}
 
@@ -30,7 +31,7 @@ public class Medico extends Usuario {
 		contadorMedico++;
 		this.codMedico = contadorMedico;
 		this.especialidad = especialidad;
-		this.lHorarios = new ArrayList<Horario>();
+		this.lHorarios = lHorarios;
 		this.duracionCita = duracionCita;
 	}
 

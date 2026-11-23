@@ -15,7 +15,7 @@ public class Consulta {
 
 	// Constructores
 	public Consulta() {
-
+		this.lRecetas = new ArrayList<Receta>();
 	}
 
 	public Consulta(int idConsulta, Cita cita, String motivo, String diagnostico, String observaciones,
@@ -26,7 +26,7 @@ public class Consulta {
 		this.motivo = motivo;
 		this.diagnostico = diagnostico;
 		this.observaciones = observaciones;
-		this.lRecetas = new ArrayList<Receta>();
+		this.lRecetas = lRecetas;
 		this.precio = precio;
 	}
 

@@ -10,6 +10,7 @@ import domain.enums.Especialidad;
 import domain.enums.EstadoCita;
 import domain.enums.GrupoSanguineo;
 import domain.enums.Sexo;
+import domain.enums.TipoUsuario;
 import domain.personas.Medico;
 import domain.personas.Paciente;
 import domain.personas.Usuario;
@@ -246,6 +247,15 @@ public class GestorHospital {
 		} catch (DateTimeParseException e) {
 			return null;
 		}
+	}
+	
+	public static TipoUsuario obtenerTipoUsuario(Usuario usuario) {
+		if (usuario instanceof Medico) {
+			return TipoUsuario.MEDICO;
+		} else if (usuario instanceof Paciente) {
+			return TipoUsuario.PACIENTE;
+		}
+		return null;
 	}
 
 	

@@ -37,7 +37,7 @@ public class Usuario implements Serializable{
 		this.dni = dni;
 		this.nombre = nombre;
 		this.apellidos = apellidos;
-		this.fechaNacimiento = fechaNacimiento;
+		setFechaNacimiento(fechaNacimiento);;
 		this.sexo = sexo;
 		this.telefono = telefono;
 		this.email = email;
@@ -76,7 +76,7 @@ public class Usuario implements Serializable{
 	}
 
 	public void setFechaNacimiento(LocalDate fechaNacimiento) {
-		if(fechaNacimiento.isAfter(LocalDate.now())) {
+		if(fechaNacimiento.isAfter(LocalDate.now()) || fechaNacimiento == null) {
 			System.err.println("Fecha invalida");
 			return;
 		}
