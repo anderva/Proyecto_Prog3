@@ -47,7 +47,7 @@ public class VentanaInicial extends JFrame {
 
 		// Creación de componentes
 		lIconoPrincipal = new JLabel();
-		ImageIcon im = new ImageIcon("img/OsakiDeustoLogo.png");
+		ImageIcon im = new ImageIcon("resources/img/OsakiDeustoLogo.png");
 		lIconoPrincipal.setIcon(im);
 		lIconoPrincipal.setHorizontalAlignment(JLabel.CENTER);
 
@@ -78,13 +78,18 @@ public class VentanaInicial extends JFrame {
 				String email = txtEmail.getText();
 				String contrasenia = String.valueOf(txtContraseña.getPassword());
 				boolean haIniciado = false;
+				// Checkear si es admin
 				// Checkear si usuario existe y contraseña
 				if(!gestor.getlUsuarios().isEmpty()) {
 					for(Usuario u: gestor.getlUsuarios()) {
 						if (email.equals(u.getEmail()) && contrasenia.equals(u.getContrasenia())) {
 							haIniciado = true;
 							VentanaInicial.this.dispose();
-							new VentanaPrincipal(gestor, u);
+							if(u.getDni() == "00000000X") {
+								new VentanaAdmin(gestor);
+							} else {
+								new VentanaPrincipal(gestor, u);
+							}
 							break;
 						}
 					}

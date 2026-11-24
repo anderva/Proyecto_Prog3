@@ -56,7 +56,7 @@ public class VentanaRegistro extends JFrame{
 		panelSuperior.add(labelTitulo, BorderLayout.NORTH);
 
 		// Imagen
-		ImageIcon imagen = new ImageIcon(getClass().getResource("/images/NuevoUsuario.png"));
+		ImageIcon imagen = new ImageIcon("resources/img/NuevoUsuario.png");
 		Image imagenEscalada = imagen.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH); // Reescalacion de imagen
 		JLabel labelImagen = new JLabel(new ImageIcon(imagenEscalada));
 		panelSuperior.add(labelImagen, BorderLayout.CENTER);
@@ -173,6 +173,7 @@ public class VentanaRegistro extends JFrame{
 							textoDireccion.getText(), 
 							textoContraseña.getText(),
 							null);
+					
 					if (gestor.registrarPaciente(paciente)) {
 						JOptionPane.showMessageDialog(null, "Usuario registrado correctamente. Ya puedes iniciar sesión.");
 						VentanaRegistro.this.dispose();

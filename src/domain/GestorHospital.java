@@ -32,11 +32,14 @@ public class GestorHospital {
 	
 	public GestorHospital(List<Usuario> lUsuarios, List<Paciente> lPacientes, List<Medico> lMedicos) {
 		super();
+		Usuario usuario = new Usuario("00000000X", "admin", "admin", LocalDate.MIN, null, 0, "admin@gmail.com", "admin", "admin");
 		this.lUsuarios = lUsuarios;
 		this.lPacientes = lPacientes;
 		this.lMedicos = lMedicos;
+		this.addUsuario(usuario);
 	}
 	public GestorHospital() {
+		Usuario usuario = new Usuario("00000000X", "admin", "admin", LocalDate.MIN, null, 0, "admin@gmail.com", "admin", "admin");
 		// Inicializar listas vacias
 		this.setlMedicos(new ArrayList<Medico>());
 		this.setlPacientes(new ArrayList<Paciente>());
@@ -52,6 +55,7 @@ public class GestorHospital {
 		} else {
 			cargarDatosBD();
 		}
+		this.addUsuario(usuario);
 	}
 	private void cargarDatosBD() {
 		this.setlMedicos(bd.obtenerMedicos());

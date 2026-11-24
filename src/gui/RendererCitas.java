@@ -78,7 +78,7 @@ public class RendererCitas extends DefaultTableCellRenderer {
 	// Es static para poder usarlo tambien en VentanaCitas para los botones
 	public static ImageIcon cargarIcono(String nombre) {
 		try {
-			return new ImageIcon(RendererCitas.class.getResource("/images/citas/" + nombre + ".png"));
+			return new ImageIcon("resources/img/" + nombre + ".png");
 		} catch (Exception e) {
 			System.err.println("No se ha podido cargar el icono: " + nombre);
 			return null;

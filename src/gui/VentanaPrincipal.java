@@ -55,7 +55,7 @@ public class VentanaPrincipal extends JFrame {
 			lblRol.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 19));
 			lblRol.setForeground(Color.blue);
 			panelBienvenida.add(lblRol);
-		}else {
+		} else {
 			JLabel lblRol = new JLabel("PORTAL DEL PACIENTE");
 			lblRol.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 19));
 			lblRol.setForeground(Color.blue);
