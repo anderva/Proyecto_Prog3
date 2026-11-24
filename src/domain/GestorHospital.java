@@ -8,6 +8,7 @@ import java.util.List;
 
 import domain.enums.Especialidad;
 import domain.enums.EstadoCita;
+import domain.enums.EstadoPago;
 import domain.enums.GrupoSanguineo;
 import domain.enums.Sexo;
 import domain.enums.TipoUsuario;
@@ -27,6 +28,7 @@ public class GestorHospital {
 	private List<Paciente> lPacientes;
 	private List<Medico> lMedicos;
 	private List<Cita> lCitas;
+	private List<Factura> lFacturas = new ArrayList<Factura>();
 	public static final String NOMBRE_BD = "Osaki.db";
 	private BD bd;
 	
@@ -61,6 +63,7 @@ public class GestorHospital {
 		this.setlMedicos(bd.obtenerMedicos());
 		this.setlPacientes(bd.obtenerPacientes());
 		this.setlCitas(bd.obtenerCitas(lPacientes, lMedicos));
+		this.lFacturas = bd.obtenerFacturas(lPacientes);
 		List<Usuario> usuarios = new ArrayList<Usuario>();
 		usuarios.addAll(lMedicos);
 		usuarios.addAll(lPacientes);
@@ -172,6 +175,7 @@ public class GestorHospital {
 			lPacientes.remove(paciente);
 			this.setlPacientes(lPacientes);
 			lCitas.removeIf(c -> c.getPaciente() == paciente);
+			lFacturas.removeIf(f -> f.getPaciente() == paciente);
 		}
 	}
 	public boolean addMedico(Medico medico) {
@@ -299,6 +303,56 @@ public class GestorHospital {
 		addCita(new Cita(0, p2, m2, hoy.plusDays(7), EstadoCita.PENDIENTE, "12:00", "Revisión anual"));
 		addCita(new Cita(0, p1, m1, hoy.minusDays(3), EstadoCita.CANCELADA, "10:00", "Control de tensión"));
 		addCita(new Cita(0, p2, m3, hoy.minusDays(14), EstadoCita.REALIZADA, "09:00", "Radiografía de muñeca"));
+		addFactura(new Factura(p1, "Consulta de cardiología", 45));
+		addFactura(new Factura(p2, "Radiografía de muñeca", 30));
+	}
+	
+
+	// FACTURAS
+
+	public List<Factura> getlFacturas() {
+		return lFacturas;
+	}
+
+	// Facturas de un paciente (comparando por DNI)
+	public List<Factura> getFacturas(Paciente paciente) {
+		List<Factura> facturas = new ArrayList<Factura>();
+		for (Factura f : lFacturas) {
+			if (f.getPaciente().getDni().equals(paciente.getDni())) {
+				facturas.add(f);
+			}
+		}
+		return facturas;
+	}
+
+	public boolean addFactura(Factura factura) {
+		if (bd != null && !bd.insertarFactura(factura)) {
+			return false;
+		}
+		lFacturas.add(0, factura);
+		return true;
+	}
+
+	public boolean pagarFactura(Factura factura) {
+		if (factura.getEstadoPago() != EstadoPago.PENDIENTE) {
+			return false;
+		}
+		if (bd != null && !bd.cambiarEstadoFactura(factura.getIdFactura(), EstadoPago.PAGADA)) {
+			return false;
+		}
+		factura.pagar();
+		return true;
+	}
+
+	public boolean anularFactura(Factura factura) {
+		if (factura.getEstadoPago() != EstadoPago.PENDIENTE) {
+			return false;
+		}
+		if (bd != null && !bd.cambiarEstadoFactura(factura.getIdFactura(), EstadoPago.CANCELADA)) {
+			return false;
+		}
+		factura.anular();
+		return true;
 	}
 }
 
