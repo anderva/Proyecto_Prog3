@@ -71,7 +71,7 @@ public class VentanaCitas extends JFrame {
 		JPanel panelSuperior = new JPanel(new BorderLayout(0, 10));
 
 		JPanel panelCabecera = new JPanel(new BorderLayout(15, 0));
-		ImageIcon logo = new ImageIcon("img/OsakiDeustoLogo.png");
+		ImageIcon logo = new ImageIcon("resources/img/OsakiDeustoLogo.png");
 		Image logoEscalado = logo.getImage().getScaledInstance(76, 45, Image.SCALE_SMOOTH);
 		panelCabecera.add(new JLabel(new ImageIcon(logoEscalado)), BorderLayout.WEST);
 

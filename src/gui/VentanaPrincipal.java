@@ -45,7 +45,7 @@ public class VentanaPrincipal extends JFrame {
 
 		// Cabecera con logo y bienvenida según el rol
 		JPanel panelNorte = new JPanel(new BorderLayout(15, 5));
-		ImageIcon logo = new ImageIcon("img/OsakiDeustoLogo.png");
+		ImageIcon logo = new ImageIcon("resources/img/OsakiDeustoLogo.png");
 		Image logoEscalado = logo.getImage().getScaledInstance(85, 50, Image.SCALE_SMOOTH);
 		panelNorte.add(new JLabel(new ImageIcon(logoEscalado)), BorderLayout.WEST);
 
