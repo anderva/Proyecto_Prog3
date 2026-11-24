@@ -12,6 +12,7 @@ import java.util.List;
 
 import domain.enums.Especialidad;
 import domain.enums.EstadoCita;
+import domain.enums.EstadoPago;
 import domain.enums.GrupoSanguineo;
 import domain.enums.Sexo;
 import domain.personas.Medico;
@@ -67,6 +68,12 @@ public class BD {
 				+ "hora TEXT NOT NULL," + "estado TEXT NOT NULL," + "motivo TEXT,"
 				+ "FOREIGN KEY (dni_paciente) REFERENCES Paciente(dni) ON DELETE CASCADE,"
 				+ "FOREIGN KEY (dni_medico) REFERENCES Medico(dni) ON DELETE CASCADE);";
+
+		String sqlf = "CREATE TABLE IF NOT EXISTS Factura (" + "id_factura INTEGER PRIMARY KEY AUTOINCREMENT,"
+				+ "dni_paciente TEXT NOT NULL," + "fecha TEXT NOT NULL," + "concepto TEXT NOT NULL,"
+				+ "importe REAL NOT NULL," + "estado TEXT NOT NULL,"
+				+ "FOREIGN KEY (dni_paciente) REFERENCES Paciente(dni) ON DELETE CASCADE);";
+		
 		PreparedStatement ps;
 		try {
 			ps = con.prepareStatement(sqlp);
@@ -74,6 +81,8 @@ public class BD {
 			ps = con.prepareStatement(sqlm);
 			ps.execute();
 			ps = con.prepareStatement(sqlc);
+			ps.execute();
+			ps = con.prepareStatement(sqlf);
 			ps.execute();
 			ps.close();
 		} catch (SQLException e) {
@@ -369,5 +378,72 @@ public class BD {
 			e.printStackTrace();
 		}
 		return lHoras;
+	}
+	
+
+//	Inserta una factura y le pone el id que ha generado la BD
+	public boolean insertarFactura(Factura f) {
+		String sql = "INSERT INTO Factura(dni_paciente,fecha,concepto,importe,estado) VALUES(?,?,?,?,?);";
+		try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+			ps.setString(1, f.getPaciente().getDni());
+			ps.setString(2, f.getFecha().toString());
+			ps.setString(3, f.getConcepto());
+			ps.setDouble(4, f.getImporte());
+			ps.setString(5, f.getEstadoPago().name());
+			ps.execute();
+			try (ResultSet rs = ps.getGeneratedKeys()) {
+				if (rs.next()) {
+					f.setIdFactura(rs.getInt(1));
+				}
+			}
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+//	Cambia el estado de una factura (pagada o anulada)
+	public boolean cambiarEstadoFactura(int idFactura, EstadoPago estado) {
+		String sql = "UPDATE Factura SET estado = ? WHERE id_factura = ?;";
+		try (PreparedStatement ps = con.prepareStatement(sql)) {
+			ps.setString(1, estado.name());
+			ps.setInt(2, idFactura);
+			return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+//	Lee todas las facturas, cada una unida a su objeto Paciente
+	public List<Factura> obtenerFacturas(List<Paciente> lPacientes) {
+		List<Factura> lFacturas = new ArrayList<Factura>();
+		String sql = "SELECT * FROM Factura ORDER BY fecha DESC, id_factura DESC;";
+		try {
+			PreparedStatement ps = con.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Paciente paciente = null;
+				for (Paciente p : lPacientes) {
+					if (p.getDni().equals(rs.getString("dni_paciente"))) {
+						paciente = p;
+					}
+				}
+				if (paciente != null) {
+					Factura f = new Factura(paciente, rs.getString("concepto"), rs.getDouble("importe"));
+					// el constructor pone la fecha de hoy y PENDIENTE: se cambian por los de la BD
+					f.setIdFactura(rs.getInt("id_factura"));
+					f.setFecha(LocalDate.parse(rs.getString("fecha")));
+					f.setEstadoPago(EstadoPago.valueOf(rs.getString("estado")));
+					lFacturas.add(f);
+				}
+			}
+			rs.close();
+			ps.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return lFacturas;
 	}
 }
