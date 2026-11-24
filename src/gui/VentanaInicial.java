@@ -6,8 +6,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -85,7 +85,7 @@ public class VentanaInicial extends JFrame {
 						if (email.equals(u.getEmail()) && contrasenia.equals(u.getContrasenia())) {
 							haIniciado = true;
 							VentanaInicial.this.dispose();
-							if(u.getDni() == "00000000X") {
+							if(u.getDni().equals("00000000X")) {
 								new VentanaAdmin(gestor);
 							} else {
 								new VentanaPrincipal(gestor, u);
@@ -109,7 +109,10 @@ public class VentanaInicial extends JFrame {
 				VentanaRegistro ventanaRegistro = new VentanaRegistro(gestor);
 			}
 		});
-
+		
+		// Al hacer enter clicka el bInicio
+		this.rootPane.setDefaultButton(bInicio);
+		
 		setVisible(true);
 
 		// Colocación de componentes en los paneles
