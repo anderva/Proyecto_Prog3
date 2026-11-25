@@ -365,8 +365,15 @@ public class VentanaAreaClinica extends JFrame {
 		modeloConsultas.setRowCount(0);
 		HistorialClinico hc = gestor.getHistorialPaciente(pacienteActual);
 		for (Consulta c : hc.getlConsulta()) {
-			String fecha = c.getCita() != null ? c.getCita().getFechaCita().format(GestorHospital.FORMATO_FECHA) : "-";
-			String medico = c.getCita() != null ? c.getCita().getMedico().getNombre() + " " + c.getCita().getMedico().getApellidos() : "-";
+			String fecha = "";
+			String medico = "";
+			if(c.getCita() != null) {
+				fecha =  c.getCita().getFechaCita().format(GestorHospital.FORMATO_FECHA);
+				medico = c.getCita().getMedico().getNombre() + " " + c.getCita().getMedico().getApellidos();
+			}else {
+				fecha = "-";
+				medico = "-";
+			}
 			modeloConsultas.addRow(new Object[] { c.getIdConsulta(), fecha, medico, c.getMotivo(), c.getDiagnostico(), c.getPrecio() });
 		}
 		areaDetalleRecetas.setText("");
@@ -388,23 +395,25 @@ public class VentanaAreaClinica extends JFrame {
 
 	private void mostrarDetalleConsultaSeleccionada() {
 		int fila = tablaConsultas.getSelectedRow();
-		if (fila < 0 || pacienteActual == null) return;
+		if (fila < 0 || pacienteActual == null) {
+			return;
+		}
 
 		Consulta c = gestor.getHistorialPaciente(pacienteActual).getlConsulta().get(fila);
-		StringBuilder sb = new StringBuilder();
-		sb.append("Observaciones: ").append(c.getObservaciones()).append("\n\n");
+		String texto = "Observaciones: " + c.getObservaciones() + "\n\n";
+
 		if (c.getlRecetas() == null || c.getlRecetas().isEmpty()) {
-			sb.append("Sin recetas asociadas a esta consulta.");
+			texto += "Sin recetas asociadas a esta consulta.";
 		} else {
 			for (Receta r : c.getlRecetas()) {
-				sb.append("• Receta #").append(r.getIdReceta()).append(" — Indicaciones: ").append(r.getIndicaciones()).append("\n");
+				texto += "• Receta #" + r.getIdReceta() + " - Indicaciones: " + r.getIndicaciones() + "\n";
 				for (Medicamento m : r.getlMedicamentos()) {
-					sb.append("   - ").append(m.getNombre()).append(" | Dosis: ").append(m.getDosis())
-					  .append(" | Duración: ").append(m.getDuracionDias()).append(" días\n");
+					texto += "   - " + m.getNombre() + " (" + m.getDosis() + ", " + m.getDuracionDias() + " días)\n";
 				}
 			}
 		}
-		areaDetalleRecetas.setText(sb.toString());
+
+		areaDetalleRecetas.setText(texto);
 	}
 	
 }
