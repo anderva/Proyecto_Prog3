@@ -314,7 +314,7 @@ public class VentanaCitas extends JFrame {
 		} else if (usuario != null) {
 			return "Usuario: " + usuario.getNombre() + " " + usuario.getApellidos();
 		}
-		return "Modo de prueba (sin iniciar sesión)";
+		return "Modo de administrador";
 	}
 
 	//tabla

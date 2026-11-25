@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -33,9 +35,7 @@ public class VentanaAdmin extends JFrame{
         panelPrincipal.setBorder(
                 BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // =========================
-        // PANEL SUPERIOR
-        // =========================
+        // Panel superior
         JPanel panelSuperior = new JPanel(new BorderLayout(0, 10));
 
         JLabel titulo = new JLabel(
@@ -45,36 +45,53 @@ public class VentanaAdmin extends JFrame{
 
         panelSuperior.add(titulo, BorderLayout.NORTH);
 
-        try {
-            ImageIcon icono =
-                    new ImageIcon(getClass().getResource("/images/admin.png"));
+        ImageIcon icono = new ImageIcon("resources/img/admin.png");
 
-            Image imagenEscalada =
-                    icono.getImage().getScaledInstance(
-                            100,
-                            100,
-                            Image.SCALE_SMOOTH);
+        Image imagenEscalada = icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
 
-            JLabel imagen =
-                    new JLabel(new ImageIcon(imagenEscalada));
+        JLabel imagen = new JLabel(new ImageIcon(imagenEscalada));
+        imagen.setHorizontalAlignment(JLabel.CENTER);
+        panelSuperior.add(imagen, BorderLayout.CENTER);
 
-            imagen.setHorizontalAlignment(JLabel.CENTER);
 
-            panelSuperior.add(imagen, BorderLayout.CENTER);
-
-        } catch (Exception e) {
-            // Si no existe la imagen no pasa nada
-        }
-
-        // =========================
-        // PANEL CENTRAL
-        // =========================
+        // Panel central
         JPanel panelCentral = new JPanel(new GridLayout(2, 2, 20, 20));
 
+        ImageIcon iconoPaciente = new ImageIcon("resources/img/paciente.png");
+        Image imagenEscaladaPac = iconoPaciente.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        
         JButton btnPacientes = new JButton("Gestionar Pacientes");
+        btnPacientes.setIcon(new ImageIcon(imagenEscaladaPac));
+        btnPacientes.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new VentanaPacientes(gestor);
+			}
+		});
+        
+        ImageIcon iconoMedico = new ImageIcon("resources/img/medico.png");
+        Image imagenEscaladaMed = iconoMedico.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
         JButton btnMedicos = new JButton("Gestionar Médicos");
+        btnMedicos.setIcon(new ImageIcon(imagenEscaladaMed));
+        
+        ImageIcon iconoCita = new ImageIcon("resources/img/cita.png");
+        Image imagenEscaladaCit = iconoCita.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
         JButton btnCitas = new JButton("Gestionar Citas");
+        btnCitas.setIcon(new ImageIcon(imagenEscaladaCit));
+        btnCitas.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new VentanaCitas(gestor, null);
+			}
+		});
+        
+        
+        ImageIcon iconoEstadistica = new ImageIcon("resources/img/estadisticas.png");
+        Image imagenEscaladaEst = iconoEstadistica.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
         JButton btnEstadisticas = new JButton("Ver Estadísticas");
+        btnEstadisticas.setIcon(new ImageIcon(imagenEscaladaEst));
 
         btnPacientes.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
         btnMedicos.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
@@ -86,18 +103,22 @@ public class VentanaAdmin extends JFrame{
         panelCentral.add(btnCitas);
         panelCentral.add(btnEstadisticas);
 
-        // =========================
-        // PANEL INFERIOR
-        // =========================
+        // Panel inferior
         JPanel panelInferior = new JPanel();
 
         JButton btnCerrarSesion = new JButton("Cerrar Sesión");
+        btnCerrarSesion.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				VentanaAdmin.this.dispose();
+				new VentanaInicial(gestor);
+			}
+		});
 
         panelInferior.add(btnCerrarSesion);
 
-        // =========================
-        // ENSAMBLAJE
-        // =========================
+
         panelPrincipal.add(panelSuperior, BorderLayout.NORTH);
         panelPrincipal.add(panelCentral, BorderLayout.CENTER);
         panelPrincipal.add(panelInferior, BorderLayout.SOUTH);
