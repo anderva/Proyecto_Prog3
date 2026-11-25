@@ -171,8 +171,8 @@ public class VentanaRegistro extends JFrame{
 							Integer.parseInt(textoTfno.getText()), 
 							textoEmail.getText().trim(),
 							textoDireccion.getText(), 
-							textoContraseña.getText(),
-							null);
+							textoContraseña.getText()
+							);
 					
 					if (gestor.registrarPaciente(paciente)) {
 						JOptionPane.showMessageDialog(null, "Usuario registrado correctamente. Ya puedes iniciar sesión.");

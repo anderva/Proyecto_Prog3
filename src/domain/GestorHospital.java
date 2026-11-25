@@ -8,7 +8,6 @@ import java.util.List;
 
 import domain.enums.Especialidad;
 import domain.enums.EstadoCita;
-import domain.enums.GrupoSanguineo;
 import domain.enums.Sexo;
 import domain.enums.TipoUsuario;
 import domain.personas.Medico;
@@ -279,9 +278,9 @@ public class GestorHospital {
 		addUsuario(m3);
 
 		Paciente p1 = new Paciente("11111111D", "Mikel", "Garcia", LocalDate.of(2000, 3, 10), Sexo.HOMBRE, 644444444,
-				"mikel@gmail.com", "Bilbao", "1234", GrupoSanguineo.A_PLUS);
+				"mikel@gmail.com", "Bilbao", "1234");
 		Paciente p2 = new Paciente("22222222E", "Ane", "Lopez", LocalDate.of(1995, 8, 5), Sexo.MUJER, 655555555,
-				"ane@gmail.com", "Barakaldo", "1234", GrupoSanguineo.ZERO_PLUS);
+				"ane@gmail.com", "Barakaldo", "1234");
 		addPaciente(p1);
 		addPaciente(p2);
 		addUsuario(p1);

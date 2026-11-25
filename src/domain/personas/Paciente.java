@@ -14,7 +14,6 @@ public class Paciente extends Usuario implements Serializable{
 	private static int contadorPaciente;
 	private int codigoPaciente;
 	private List<String> lAlergias;
-	private Consulta consulta;
 	private int numSegSocial;
 	private GrupoSanguineo grupoSanguineo;
 	private HistorialClinico historialClinico;
@@ -25,19 +24,18 @@ public class Paciente extends Usuario implements Serializable{
 	
 	
 	public Paciente(String dni, String nombre, String apellidos, LocalDate fechaNacimiento, Sexo sexo, int telefono,
-			String email, String direccion, String contraseña, GrupoSanguineo grupoSanguineo) {
+			String email, String direccion, String contraseña) {
 		super(dni, nombre, apellidos, fechaNacimiento, sexo, telefono, email, direccion, contraseña);
 	}
 	
 	public Paciente(String dni, String nombre, String apellidos, LocalDate fechaNacimiento, Sexo sexo, int telefono, String email, String direccion, String contraseña, 
-			int numSegSocial, List<String> lAlergias, Consulta consulta, HistorialClinico historialClinico, LocalDate fechaAlta, Habitacion habitacion, GrupoSanguineo grupoSanguineo) {
+			int numSegSocial, List<String> lAlergias, HistorialClinico historialClinico, LocalDate fechaAlta, Habitacion habitacion, GrupoSanguineo grupoSanguineo) {
 		
 		super(dni, nombre, apellidos, fechaNacimiento, sexo, telefono, email, direccion, contraseña);
 		this.codigoPaciente = contadorPaciente;
 		contadorPaciente++;
 		this.setNumSegSocial(numSegSocial);
 		this.setlAlergias(lAlergias);
-		this.setConsulta(consulta);
 		this.setHistorialClinico(historialClinico);
 		this.setFechaAlta(fechaAlta);
 		this.setHabitacion(habitacion);
@@ -50,14 +48,6 @@ public class Paciente extends Usuario implements Serializable{
 
 	public void setlAlergias(List<String> lAlergias) {
 		this.lAlergias = lAlergias;
-	}
-
-	public Consulta getConsulta() {
-		return consulta;
-	}
-
-	public void setConsulta(Consulta consulta) {
-		this.consulta = consulta;
 	}
 
 	public int getNumSegSocial() {

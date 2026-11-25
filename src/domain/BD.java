@@ -12,7 +12,6 @@ import java.util.List;
 
 import domain.enums.Especialidad;
 import domain.enums.EstadoCita;
-import domain.enums.GrupoSanguineo;
 import domain.enums.Sexo;
 import domain.personas.Medico;
 import domain.personas.Paciente;
@@ -27,7 +26,7 @@ public class BD {
 
 		try {
 			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection("jdbc:sqlite:" + nombreBD);
+			con = DriverManager.getConnection("jdbc:sqlite:resources/db/" + nombreBD);
 			PreparedStatement ps = con.prepareStatement("PRAGMA foreign_keys = ON;");
 			ps.execute();
 			ps.close();
@@ -54,8 +53,7 @@ public class BD {
 	public void crearTablas() {
 		String sqlp = "CREATE TABLE IF NOT EXISTS Paciente (" + "dni TEXT PRIMARY KEY," + "nombre TEXT NOT NULL,"
 				+ "apellidos TEXT NOT NULL," + "fecha_nacimiento TEXT NOT NULL," + "sexo TEXT NOT NULL,"
-				+ "telefono INTEGER," + "email TEXT NOT NULL UNIQUE," + "direccion TEXT," + "contrasenia TEXT NOT NULL,"
-				+ "grupo_sanguineo TEXT);";
+				+ "telefono INTEGER," + "email TEXT NOT NULL UNIQUE," + "direccion TEXT," + "contrasenia TEXT NOT NULL);";
 
 		String sqlm = "CREATE TABLE IF NOT EXISTS Medico (" + "dni TEXT PRIMARY KEY," + "nombre TEXT NOT NULL,"
 				+ "apellidos TEXT NOT NULL," + "fecha_nacimiento TEXT NOT NULL," + "sexo TEXT NOT NULL,"
@@ -97,7 +95,7 @@ public class BD {
 //	Inserta pacientes
 	public boolean insertarPaciente(Paciente p) {
 		String sql = "INSERT INTO Paciente(dni,nombre,apellidos,fecha_nacimiento,sexo,telefono,email,direccion,"
-				+ "contrasenia,grupo_sanguineo) VALUES(?,?,?,?,?,?,?,?,?,?);";
+				+ "contrasenia) VALUES(?,?,?,?,?,?,?,?,?);";
 		try (PreparedStatement ps = con.prepareStatement(sql)) {
 			ps.setString(1, p.getDni());
 			ps.setString(2, p.getNombre());
@@ -108,7 +106,6 @@ public class BD {
 			ps.setString(7, p.getEmail());
 			ps.setString(8, p.getDireccion());
 			ps.setString(9, p.getContrasenia());
-			ps.setString(10, p.getGrupoSanguineo() == null ? null : p.getGrupoSanguineo().name());
 			ps.execute();
 			return true;
 		} catch (SQLException e) {
@@ -255,14 +252,10 @@ public class BD {
 			PreparedStatement ps = con.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				String grupo = rs.getString("grupo_sanguineo");
-				GrupoSanguineo gs = grupo == null ? null : GrupoSanguineo.valueOf(grupo);
 				Paciente p = new Paciente(rs.getString("dni"), rs.getString("nombre"), rs.getString("apellidos"),
 						LocalDate.parse(rs.getString("fecha_nacimiento")), Sexo.valueOf(rs.getString("sexo")),
 						rs.getInt("telefono"), rs.getString("email"), rs.getString("direccion"),
-						rs.getString("contrasenia"), gs);
-				// el constructor corto de Paciente no guarda el grupo sanguineo, se pone con el setter
-				p.setGrupoSanguineo(gs);
+						rs.getString("contrasenia"));
 				lPacientes.add(p);
 			}
 			rs.close();
