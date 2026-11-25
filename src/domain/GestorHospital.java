@@ -6,11 +6,13 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import domain.enums.DiaSemana;
 import domain.enums.Especialidad;
 import domain.enums.EstadoCita;
 import domain.enums.EstadoPago;
 import domain.enums.GrupoSanguineo;
 import domain.enums.Sexo;
+import domain.enums.TipoHabitacion;
 import domain.enums.TipoUsuario;
 import domain.personas.Medico;
 import domain.personas.Paciente;
@@ -29,6 +31,8 @@ public class GestorHospital {
 	private List<Medico> lMedicos;
 	private List<Cita> lCitas;
 	private List<Factura> lFacturas = new ArrayList<Factura>();
+	private List<Habitacion> lHabitaciones = new ArrayList<>();
+	private List<HistorialClinico> lHistoriales = new ArrayList<>();
 	public static final String NOMBRE_BD = "Osaki.db";
 	private BD bd;
 	
@@ -265,6 +269,52 @@ public class GestorHospital {
 		}
 		return null;
 	}
+	
+	public List<Habitacion> getlHabitaciones() {
+		return lHabitaciones;
+	}
+
+	public List<HistorialClinico> getlHistoriales() {
+		return lHistoriales;
+	}
+
+	public HistorialClinico getHistorialPaciente(Paciente p) {
+		if (p.getHistorialClinico() == null) {
+			HistorialClinico hc = new HistorialClinico(0, p, "");
+			p.setHistorialClinico(hc);
+			lHistoriales.add(hc);
+		}
+		return p.getHistorialClinico();
+	}
+
+	public void registrarConsulta(Cita cita, String diagnostico, String observaciones, double precio, ArrayList<Receta> recetas) {
+		Paciente p = cita.getPaciente();
+		Consulta consulta = new Consulta(0, cita, cita.getMotivo(), diagnostico, observaciones, recetas, precio);
+		consulta.setlRecetas(recetas);
+
+		p.setConsulta(consulta);
+		getHistorialPaciente(p).getlConsulta().add(consulta);
+
+		if (cita.getEstado() == EstadoCita.PENDIENTE) {
+			marcarRealizada(cita);
+		}
+		lFacturas.add(new Factura(p, "Consulta " + cita.getMedico().getEspecialidad() + " (" + cita.getFechaCita().format(FORMATO_FECHA) + ")", precio));
+	}
+
+	public void addHabitacion(Habitacion h) {
+		lHabitaciones.add(h);
+	}
+
+	public int getOcupacionHabitacion(Habitacion h) {
+		int ocupados = 0;
+		for (Paciente p : lPacientes) {
+			if (p.getHabitacion() != null && p.getHabitacion().getNumHabitacion() == h.getNumHabitacion()) {
+				ocupados++;
+			}
+		}
+		return ocupados;
+	}
+
 
 	
 	//Datos de prueba para no tener que registrarse cada vez
@@ -305,6 +355,67 @@ public class GestorHospital {
 		addCita(new Cita(0, p2, m3, hoy.minusDays(14), EstadoCita.REALIZADA, "09:00", "Radiografía de muñeca"));
 		addFactura(new Factura(p1, "Consulta de cardiología", 45));
 		addFactura(new Factura(p2, "Radiografía de muñeca", 30));
+		
+		if (lHabitaciones.isEmpty()) {
+			lHabitaciones.add(new Habitacion(0, TipoHabitacion.INDIVIDUAL));
+			lHabitaciones.add(new Habitacion(0, TipoHabitacion.DOBLE));
+			lHabitaciones.add(new Habitacion(0, TipoHabitacion.TRIPLE));
+		}
+
+		// Horarios iniciales para los médicos si aún no tienen
+		for (Medico m : lMedicos) {
+			if (m.getlHorarios() == null) {
+				m.setlHorarios(new ArrayList<>());
+			}
+			if (m.getlHorarios().isEmpty()) {
+				m.getlHorarios().add(new Horario(DiaSemana.LUNES, "09:00", "13:30"));
+				m.getlHorarios().add(new Horario(DiaSemana.MIERCOLES, "09:00", "13:30"));
+				m.getlHorarios().add(new Horario(DiaSemana.VIERNES, "09:00", "13:00"));
+			}
+		}
+
+		// Asegurar que cada paciente tiene su HistorialClinico y lista de alergias
+		for (Paciente p : lPacientes) {
+			if (p.getlAlergias() == null) {
+				p.setlAlergias(new ArrayList<>());
+			}
+			if (p.getHistorialClinico() == null) {
+				HistorialClinico hc = new HistorialClinico(0, p, "");
+				p.setHistorialClinico(hc);
+				lHistoriales.add(hc);
+			}
+		}
+
+		// Datos de ejemplo para consultas, recetas y facturas si están vacíos
+		if (lFacturas.isEmpty() && !lPacientes.isEmpty() && !lCitas.isEmpty()) {
+			Paciente p3 = lPacientes.get(0);
+			if (p3.getNumSegSocial() == 0) {
+				p3.setNumSegSocial(481029384);
+			}
+			if (p3.getlAlergias().isEmpty()) {
+				p3.getlAlergias().add("Penicilina");
+			}
+
+			Cita citaEjemplo = lCitas.get(0);
+			ArrayList<Medicamento> meds = new ArrayList<Medicamento>();
+			Medicamento med = new Medicamento("Ibuprofeno 600mg", "1 comprimido cada 8 horas", 5);
+			meds.add(med);
+			Receta receta = new Receta(med.getDosis(), String.valueOf(med.getDuracionDias()), "Tomar después de las comidas", meds);
+			receta.añadirMedicamento(med);
+
+			ArrayList<Receta> recetas = new ArrayList<>();
+			recetas.add(receta);
+
+			Consulta consulta = new Consulta(0, citaEjemplo, citaEjemplo.getMotivo(),
+					"Evolución favorable sin complicaciones", "Revisar en 15 días si persisten molestias", recetas, 45.0);
+			// Nota: el constructor de Consulta reinicia lRecetas, así que las asignamos con el setter
+			consulta.setlRecetas(recetas);
+
+			p3.setConsulta(consulta);
+			p3.getHistorialClinico().getlConsulta().add(consulta);
+
+			lFacturas.add(new Factura(p1, "Consulta médica - " + citaEjemplo.getMedico().getEspecialidad(), 45.0));
+		}
 	}
 	
 
