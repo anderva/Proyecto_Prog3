@@ -45,7 +45,7 @@ public class VentanaPrincipal extends JFrame {
 
 		// Cabecera con logo y bienvenida según el rol
 		JPanel panelNorte = new JPanel(new BorderLayout(15, 5));
-		ImageIcon logo = new ImageIcon("img/OsakiDeustoLogo.png");
+		ImageIcon logo = new ImageIcon("resources/img/OsakiDeustoLogo.png");
 		Image logoEscalado = logo.getImage().getScaledInstance(85, 50, Image.SCALE_SMOOTH);
 		panelNorte.add(new JLabel(new ImageIcon(logoEscalado)), BorderLayout.WEST);
 
@@ -105,7 +105,7 @@ public class VentanaPrincipal extends JFrame {
 		JButton btnHistorial = new JButton("Mi Historial Clínico y Recetas", RendererCitas.cargarIcono("medicina_general"));
 		btnHistorial.setFont(fuenteBoton);
 		btnHistorial.setToolTipText("Ver diagnósticos, medicamentos recetados y alergias");
-		//btnHistorial.addActionListener(e -> new VentanaAreaClinica(gestor, paciente));
+		btnHistorial.addActionListener(e -> new VentanaAreaClinica(gestor, paciente));
 
 		JButton btnFacturas = new JButton("Mis Facturas y Pagos", RendererCitas.cargarIcono("realizada"));
 		btnFacturas.setFont(fuenteBoton);
@@ -140,7 +140,7 @@ public class VentanaPrincipal extends JFrame {
 		JButton btnClinica = new JButton("Pasar Consulta e Historial", RendererCitas.cargarIcono("medico"));
 		btnClinica.setFont(fuenteBoton);
 		btnClinica.setToolTipText("Registrar diagnósticos, emitir recetas y editar fichas clínicas");
-		//btnClinica.addActionListener(e -> new VentanaAreaClinica(gestor, usuario));
+		btnClinica.addActionListener(e -> new VentanaAreaClinica(gestor, usuario));
 
 		JButton btnHorariosHab = new JButton("Horarios y Habitaciones", RendererCitas.cargarIcono("paciente"));
 		btnHorariosHab.setFont(fuenteBoton);

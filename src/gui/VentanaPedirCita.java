@@ -69,7 +69,7 @@ public class VentanaPedirCita extends JFrame{
 		//Panel Superior
 		JPanel panelSuperior = new JPanel(new BorderLayout(0, 5));
 		
-		ImageIcon imagen = new ImageIcon("img/OsakiDeustoLogo.png");
+		ImageIcon imagen = new ImageIcon("resources/img/OsakiDeustoLogo.png");
 		Image imagenEscalada = imagen.getImage().getScaledInstance(100, 59, Image.SCALE_SMOOTH);
 		JLabel labelImagen = new JLabel(new ImageIcon(imagenEscalada));
 		panelSuperior.add(labelImagen, BorderLayout.NORTH);

@@ -2,6 +2,7 @@ package domain.personas;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import domain.*;
 import domain.enums.GrupoSanguineo;
@@ -13,7 +14,8 @@ public class Paciente extends Usuario implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private static int contadorPaciente;
 	private int codigoPaciente;
-	private List<String> lAlergias;
+	private List<String> lAlergias = new ArrayList<String>();
+	private Consulta consulta;
 	private int numSegSocial;
 	private GrupoSanguineo grupoSanguineo;
 	private HistorialClinico historialClinico;
@@ -101,6 +103,14 @@ public class Paciente extends Usuario implements Serializable{
 	@Override
 	public String toString() {
 		return "Paciente [" + super.toString() + "]";
+	}
+
+	public Consulta getConsulta() {
+		return consulta;
+	}
+
+	public void setConsulta(Consulta consulta) {
+		this.consulta = consulta;
 	}
 	
 }
