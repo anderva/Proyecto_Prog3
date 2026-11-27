@@ -298,7 +298,8 @@ public class GestorHospital {
 		if (cita.getEstado() == EstadoCita.PENDIENTE) {
 			marcarRealizada(cita);
 		}
-		lFacturas.add(new Factura(p, "Consulta " + cita.getMedico().getEspecialidad() + " (" + cita.getFechaCita().format(FORMATO_FECHA) + ")", precio));
+		// se guarda con addFactura para que tambien quede en la BD
+		addFactura(new Factura(p, "Consulta " + cita.getMedico().getEspecialidad() + " (" + cita.getFechaCita().format(FORMATO_FECHA) + ")", precio));
 	}
 
 	public void addHabitacion(Habitacion h) {
