@@ -8,7 +8,11 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import domain.Cita;
 import domain.GestorHospital;
@@ -53,6 +58,9 @@ public class VentanaCitas extends JFrame {
 	private JButton botonCancelarCita;
 	private JButton botonRealizada;
 	private JButton botonBorrar;
+	// hilo que actualiza el reloj cada segundo y la tabla cada minuto
+	private Thread hiloReloj;
+	private JLabel labelReloj;
 
 	public VentanaCitas(GestorHospital gestor, Usuario usuario) {
 		setTitle("OsakiDeusto - Citas");
@@ -83,6 +91,12 @@ public class VentanaCitas extends JFrame {
 		labelUsuario.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 13));
 		panelTitulo.add(labelUsuario);
 		panelCabecera.add(panelTitulo, BorderLayout.CENTER);
+
+		// reloj con la fecha y la hora actual (lo va cambiando el hiloReloj)
+		labelReloj = new JLabel();
+		labelReloj.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+		labelReloj.setForeground(RendererCitas.AZUL_OSAKI);
+		panelCabecera.add(labelReloj, BorderLayout.EAST);
 
 		panelSuperior.add(panelCabecera, BorderLayout.NORTH);
 
@@ -260,6 +274,18 @@ public class VentanaCitas extends JFrame {
 		// se cargan las citas en la tabla
 		actualizarTabla();
 
+		// se pone en marcha el hilo del reloj
+		iniciarHiloReloj();
+
+		// al cerrar la ventana se le pide al hilo que se pare
+		addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				hiloReloj.interrupt();
+			}
+		});
+
 		setVisible(true);
 	}
 
@@ -379,6 +405,55 @@ public class VentanaCitas extends JFrame {
 				return;
 			}
 		}
+	}
+	
+	//hilos
+
+	// lanza un hilo que cada segundo actualiza el reloj de la cabecera
+	// y cada minuto vuelve a cargar la tabla (asi se ven las citas atrasadas
+	// y los cambios hechos desde otras ventanas sin tener que cerrar esta)
+	private void iniciarHiloReloj() {
+		DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy  HH:mm:ss");
+
+		hiloReloj = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				int segundos = 0;
+				while (!Thread.interrupted()) {
+					String hora = LocalDateTime.now().format(formato);
+
+					// la UI se modifica desde otro hilo, por eso se usa SwingUtilities
+					SwingUtilities.invokeLater(new Runnable() {
+
+						@Override
+						public void run() {
+							labelReloj.setText(hora);
+						}
+					});
+
+					// cada 60 segundos se refresca la tabla
+					if (segundos == 60) {
+						SwingUtilities.invokeLater(new Runnable() {
+
+							@Override
+							public void run() {
+								actualizarTabla();
+							}
+						});
+						segundos = 0;
+					}
+
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt(); // se vuelve a poner el flag a true para salir del bucle
+					}
+					segundos++;
+				}
+			}
+		});
+		hiloReloj.start();
 	}
 	
 	//botones
